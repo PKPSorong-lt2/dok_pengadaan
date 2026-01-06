@@ -258,6 +258,30 @@
           </div>
         </div>
         
+        <!-- Komponen Biaya Lainnya -->
+        <div style="background:#e8f5e9;padding:15px;border-radius:8px;margin-top:15px;">
+          <h5 style="margin:0 0 10px 0;font-size:13px;color:#2e7d32;">💰 Komponen Biaya Pembentuk Harga Lainnya</h5>
+          <p class="form-hint">Biaya tambahan yang wajar sebagai pembentuk HPS</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Ongkos Kirim</label>
+              <input type="number" id="surveyOngkir" class="form-control" min="0" placeholder="0" onchange="calcSurvey()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Biaya Cukai/Bea</label>
+              <input type="number" id="surveyBiayaCukai" class="form-control" min="0" placeholder="0" onchange="calcSurvey()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Biaya Lain-lain</label>
+              <input type="number" id="surveyBiayaLainnya" class="form-control" min="0" placeholder="0" onchange="calcSurvey()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Keterangan Biaya</label>
+            <input type="text" id="surveyKetBiaya" class="form-control" placeholder="Contoh: Ongkir dari Jakarta, handling fee, dll">
+          </div>
+        </div>
+        
         <!-- Data Dukung -->
         <div class="data-dukung">
           <h5>📎 Data Dukung (Opsional)</h5>
@@ -294,8 +318,16 @@
             <span>Harga Satuan HPS:</span>
             <strong id="calcHargaHps">Rp 0</strong>
           </div>
+          <div class="calc-row">
+            <span>Subtotal (× <span id="calcVol">0</span>):</span>
+            <strong id="calcSubtotal">Rp 0</strong>
+          </div>
+          <div class="calc-row">
+            <span>+ Biaya Lainnya:</span>
+            <strong id="calcBiayaLain">Rp 0</strong>
+          </div>
           <div class="calc-row calc-total">
-            <span>TOTAL HPS ITEM (× <span id="calcVol">0</span>):</span>
+            <span>TOTAL HPS ITEM:</span>
             <strong id="calcTotal">Rp 0</strong>
           </div>
         </div>
@@ -542,6 +574,13 @@
       document.getElementById('surveyHarga3').value = item.harga3 || '';
       document.getElementById('surveyLink3').value = item.link3 || '';
       
+      // Komponen biaya
+      document.getElementById('surveyOngkir').value = item.ongkir || '';
+      document.getElementById('surveyBiayaCukai').value = item.biayaCukai || '';
+      document.getElementById('surveyBiayaLainnya').value = item.biayaLainnya || '';
+      document.getElementById('surveyKetBiaya').value = item.keteranganBiaya || '';
+      
+      // Data dukung
       document.getElementById('surveyDukung1').value = item.dataDukung1 || '';
       document.getElementById('surveyDukungKet1').value = item.dataDukungKet1 || '';
       document.getElementById('surveyDukung2').value = item.dataDukung2 || '';
@@ -562,6 +601,11 @@
       var h2 = parseFloat(document.getElementById('surveyHarga2').value) || 0;
       var h3 = parseFloat(document.getElementById('surveyHarga3').value) || 0;
       
+      var ongkir = parseFloat(document.getElementById('surveyOngkir').value) || 0;
+      var biayaCukai = parseFloat(document.getElementById('surveyBiayaCukai').value) || 0;
+      var biayaLainnya = parseFloat(document.getElementById('surveyBiayaLainnya').value) || 0;
+      var totalBiayaLain = ongkir + biayaCukai + biayaLainnya;
+      
       var item = currentItems.find(function(x) { return x.itemId === currentItemId; });
       var vol = item ? item.volume : 0;
       
@@ -571,12 +615,15 @@
       
       var metode = getMetode();
       var hargaHps = metode === 'terendah' ? terendah : Math.round(rata);
-      var total = hargaHps * vol;
+      var subtotal = hargaHps * vol;
+      var total = subtotal + totalBiayaLain;
       
       document.getElementById('calcTerendah').textContent = formatRupiah(terendah);
       document.getElementById('calcRata').textContent = formatRupiah(Math.round(rata));
       document.getElementById('calcMetode').textContent = metode === 'terendah' ? 'Harga Terendah' : 'Rata-rata';
       document.getElementById('calcHargaHps').textContent = formatRupiah(hargaHps);
+      document.getElementById('calcSubtotal').textContent = formatRupiah(subtotal);
+      document.getElementById('calcBiayaLain').textContent = formatRupiah(totalBiayaLain);
       document.getElementById('calcTotal').textContent = formatRupiah(total);
     }
 
@@ -616,6 +663,10 @@
         vendor3: vendor3,
         harga3: harga3,
         link3: document.getElementById('surveyLink3').value.trim(),
+        ongkir: parseFloat(document.getElementById('surveyOngkir').value) || 0,
+        biayaCukai: parseFloat(document.getElementById('surveyBiayaCukai').value) || 0,
+        biayaLainnya: parseFloat(document.getElementById('surveyBiayaLainnya').value) || 0,
+        keteranganBiaya: document.getElementById('surveyKetBiaya').value.trim(),
         dataDukung1: document.getElementById('surveyDukung1').value.trim(),
         dataDukungKet1: document.getElementById('surveyDukungKet1').value.trim(),
         dataDukung2: document.getElementById('surveyDukung2').value.trim(),
