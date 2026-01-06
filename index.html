@@ -179,27 +179,53 @@
     });
 
     function loadDashboard() {
+      console.log('loadDashboard called');
+      
       API.get('getProjects')
         .then(function(result) {
           Utils.hide('loadingState');
           
-          if (!result.success) {
+          console.log('Dashboard API Response:', result);
+          
+          // Handle berbagai format response
+          if (!result) {
+            console.log('No result');
             Utils.show('emptyState');
-            updateStats(0, 0, 0, 0);
+            updateStats([]);
             return;
           }
           
-          var projects = result.data || [];
+          if (!result.success) {
+            console.log('API error:', result.error);
+            Utils.show('emptyState');
+            updateStats([]);
+            return;
+          }
+          
+          // Pastikan data adalah array
+          var projects = result.data;
+          if (!projects || !Array.isArray(projects)) {
+            console.log('Data not array:', projects);
+            projects = [];
+          }
+          
+          console.log('Projects loaded:', projects.length);
           
           if (projects.length === 0) {
             Utils.show('emptyState');
-            updateStats(0, 0, 0, 0);
+            updateStats([]);
             return;
           }
           
           updateStats(projects);
           renderTable(projects.slice(0, 10)); // Show latest 10
           Utils.show('tableContainer');
+        })
+        .catch(function(err) {
+          console.log('Dashboard API Error:', err);
+          Utils.hide('loadingState');
+          Utils.show('emptyState');
+          updateStats([]);
         });
     }
 
