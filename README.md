@@ -9,10 +9,11 @@ frontend/
 ├── index.html          # Dashboard - daftar project
 ├── create.html         # Form buat project baru
 ├── detail.html         # Detail project + items
+├── settings.html       # Settings - konfigurasi API URL
 ├── css/
 │   └── style.css       # Semua styling
 └── js/
-    ├── config.js       # Konfigurasi API URL
+    ├── config.js       # Konfigurasi API URL (dengan localStorage)
     ├── api.js          # Fetch wrapper
     ├── utils.js        # Helper functions
     ├── dashboard.js    # Logic untuk index.html
@@ -27,20 +28,17 @@ frontend/
 Pastikan backend sudah di-deploy sebagai Web App:
 - Deploy → New deployment → Web app
 - Execute as: Me
-- Who has access: Anyone
+- Who has access: **Anyone** (PENTING!)
 - Copy URL deployment
 
-### 2. Konfigurasi Frontend
+### 2. Konfigurasi Frontend (Via Settings Page)
 
-Edit `js/config.js`:
+1. Buka halaman **Settings** (klik icon ⚙️)
+2. Paste URL deployment ke kolom "API URL"
+3. Klik **Test Koneksi** untuk memverifikasi
+4. Klik **Simpan Settings**
 
-```javascript
-var CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'
-};
-```
-
-Ganti `YOUR_DEPLOYMENT_ID` dengan ID dari URL deployment.
+API URL akan disimpan di localStorage browser.
 
 ### 3. Deploy ke GitHub Pages
 
