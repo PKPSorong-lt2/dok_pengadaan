@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Project - Procurement System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">📋 Procurement System</a>
+      <ul class="navbar-nav">
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="create.html">Buat Project</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="index.html">Dashboard</a> / Detail Project
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="card">
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Memuat data project...</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="card" style="display: none;">
+      <div class="error-state">
+        <div class="error-state-icon">⚠️</div>
+        <h3 class="error-state-title">Gagal Memuat Data</h3>
+        <p class="error-state-text" id="errorMessage">Terjadi kesalahan</p>
+        <a href="index.html" class="btn btn-secondary mt-3">Kembali ke Dashboard</a>
+      </div>
+    </div>
+
+    <!-- Content Container -->
+    <div id="contentContainer" style="display: none;">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="pageTitle">📦 Detail Project</h1>
+        </div>
+        <a href="index.html" class="btn btn-secondary">← Kembali</a>
+      </div>
+
+      <!-- Project Info Card -->
+      <div class="card">
+        <h2 class="card-title">Informasi Project</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Project ID</div>
+            <div class="info-value" id="infoProjectId">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Nama Project</div>
+            <div class="info-value" id="infoNamaProject">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Unit</div>
+            <div class="info-value" id="infoUnit">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Status</div>
+            <div class="info-value" id="infoStatus">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Tanggal Dibuat</div>
+            <div class="info-value" id="infoCreatedAt">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Total Items</div>
+            <div class="info-value" id="infoTotalItems">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Survey Selesai</div>
+            <div class="info-value" id="infoSurveyDone">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Progress</div>
+            <div class="info-value">
+              <span id="infoProgress">-</span>
+              <div class="progress">
+                <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Card -->
+      <div class="card">
+        <h2 class="card-title">Daftar Item</h2>
+
+        <!-- Empty State -->
+        <div id="itemsEmptyState" class="empty-state" style="display: none;">
+          <div class="empty-state-icon">📭</div>
+          <h3 class="empty-state-title">Belum ada item</h3>
+          <p class="empty-state-text">Project ini belum memiliki item pengadaan</p>
+        </div>
+
+        <!-- Items Table -->
+        <div id="itemsTableContainer" class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Item ID</th>
+                <th>Nama Barang</th>
+                <th>Volume</th>
+                <th>Satuan</th>
+                <th>Status</th>
+                <th>HPS</th>
+              </tr>
+            </thead>
+            <tbody id="itemsTableBody"></tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/detail.js"></script>
+
+</body>
+</html>

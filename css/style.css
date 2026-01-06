@@ -1,0 +1,613 @@
+/**
+ * style.css
+ * Procurement System - GitHub Pages Frontend
+ */
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+a {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.container-sm {
+  max-width: 600px;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+
+.navbar {
+  background: #1976d2;
+  color: #fff;
+  padding: 0 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+}
+
+.navbar-brand {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+}
+
+.navbar-brand:hover {
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.navbar-nav {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+}
+
+.navbar-nav a {
+  color: rgba(255,255,255,0.9);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.navbar-nav a:hover {
+  background: rgba(255,255,255,0.1);
+  text-decoration: none;
+}
+
+.navbar-nav a.active {
+  background: rgba(255,255,255,0.2);
+}
+
+/* ============================================================
+   PAGE HEADER
+   ============================================================ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.breadcrumb {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.breadcrumb a {
+  color: #1976d2;
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ============================================================
+   STATS CARDS
+   ============================================================ */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.stat-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1976d2;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background: #f8f9fa;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: 0.5px;
+}
+
+tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: #666;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #1976d2;
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1565c0;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f5f5f5;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.form-label .required {
+  color: #f44336;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25,118,210,0.1);
+}
+
+.form-control::placeholder {
+  color: #999;
+}
+
+.form-control.input-error {
+  border-color: #f44336;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.form-error {
+  font-size: 12px;
+  color: #f44336;
+  margin-top: 4px;
+  display: none;
+}
+
+/* ============================================================
+   ALERTS
+   ============================================================ */
+
+.alert {
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.alert-error {
+  background: #ffebee;
+  color: #c62828;
+  border-left: 4px solid #f44336;
+}
+
+.alert-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #4caf50;
+}
+
+.alert-warning {
+  background: #fff3e0;
+  color: #e65100;
+  border-left: 4px solid #ff9800;
+}
+
+.alert-info {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-left: 4px solid #2196f3;
+}
+
+/* ============================================================
+   LOADING STATE
+   ============================================================ */
+
+.loading-state {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.empty-state-text {
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* ============================================================
+   ERROR STATE
+   ============================================================ */
+
+.error-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.error-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.error-state-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #c62828;
+  margin-bottom: 8px;
+}
+
+.error-state-text {
+  font-size: 14px;
+  color: #666;
+}
+
+/* ============================================================
+   INFO GRID
+   ============================================================ */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  padding: 12px 0;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+
+.progress {
+  background: #e0e0e0;
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-bar {
+  background: #4caf50;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+.badge-active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-pending {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.badge-done {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 16px; }
+.mt-4 { margin-top: 24px; }
+
+.mb-1 { margin-bottom: 4px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 16px; }
+.mb-4 { margin-bottom: 24px; }
+
+.hidden {
+  display: none !important;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .navbar-inner {
+    flex-direction: column;
+    height: auto;
+    padding: 12px 0;
+    gap: 12px;
+  }
+  
+  .navbar-nav {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stat-value {
+    font-size: 24px;
+  }
+  
+  th, td {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}

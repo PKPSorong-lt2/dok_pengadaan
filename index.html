@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Procurement System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-brand">📋 Procurement System</a>
+      <ul class="navbar-nav">
+        <li><a href="index.html" class="active">Dashboard</a></li>
+        <li><a href="create.html">Buat Project</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">📊 Dashboard</h1>
+        <p class="page-subtitle">Daftar semua project pengadaan</p>
+      </div>
+      <a href="create.html" class="btn btn-primary">+ Buat Project</a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📁</div>
+        <div class="stat-value" id="statTotalProjects">-</div>
+        <div class="stat-label">Total Project</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value" id="statTotalItems">-</div>
+        <div class="stat-label">Total Items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="statSurveyDone">-</div>
+        <div class="stat-label">Survey Selesai</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="statProgress">-</div>
+        <div class="stat-label">Progress</div>
+      </div>
+    </div>
+
+    <!-- Projects Card -->
+    <div class="card">
+      <h2 class="card-title">Daftar Project</h2>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Memuat data...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorState" class="error-state" style="display: none;">
+        <div class="error-state-icon">⚠️</div>
+        <h3 class="error-state-title">Gagal Memuat Data</h3>
+        <p class="error-state-text" id="errorMessage">Terjadi kesalahan</p>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📭</div>
+        <h3 class="empty-state-title">Belum ada project</h3>
+        <p class="empty-state-text">Buat project pertama Anda untuk memulai</p>
+        <a href="create.html" class="btn btn-primary">+ Buat Project</a>
+      </div>
+
+      <!-- Table -->
+      <div id="tableContainer" class="table-responsive" style="display: none;">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Project</th>
+              <th>Unit</th>
+              <th>Status</th>
+              <th>Total Items</th>
+              <th>Survey Done</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="projectsTableBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/dashboard.js"></script>
+
+</body>
+</html>
