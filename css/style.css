@@ -362,21 +362,45 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
   padding: 20px;
 }
 .modal-overlay.active { display: flex; }
+
+/* Modal - bisa digunakan langsung tanpa overlay */
 .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+.modal.active { display: flex; }
+
+.modal-content {
   background: #fff;
   border-radius: 12px;
   width: 100%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  position: relative;
 }
-.modal-lg { max-width: 900px; }
+.modal-content.modal-lg { max-width: 900px; }
+
 .modal-header {
   padding: 20px;
   border-bottom: 1px solid #eee;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
 }
 .modal-title { font-size: 18px; font-weight: 600; }
 .modal-close {
@@ -386,6 +410,7 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
   cursor: pointer;
   color: #666;
 }
+.modal-close:hover { color: #333; }
 .modal-body { padding: 20px; }
 .modal-footer {
   padding: 16px 20px;
@@ -393,6 +418,9 @@ select.form-control { appearance: none; background-image: url("data:image/svg+xm
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  position: sticky;
+  bottom: 0;
+  background: #fff;
 }
 
 /* Utilities */

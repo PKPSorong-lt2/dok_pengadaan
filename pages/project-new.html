@@ -96,6 +96,20 @@
               </div>
             </div>
 
+            <!-- Pagu & RUP -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Pagu Anggaran <span class="required">*</span></label>
+                <input type="number" id="paguAnggaran" class="form-control" placeholder="50000000" min="0">
+                <span class="form-hint">Masukkan dalam angka tanpa titik (contoh: 50000000 untuk 50 juta)</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nomor RUP</label>
+                <input type="text" id="nomorRup" class="form-control" placeholder="Contoh: 12345678">
+                <span class="form-hint">Nomor Rencana Umum Pengadaan dari SIRUP</span>
+              </div>
+            </div>
+
             <!-- Keterangan -->
             <div class="form-group">
               <label class="form-label">Keterangan</label>
@@ -157,18 +171,38 @@
   <script src="../js/utils.js"></script>
   <script src="../js/institution.js"></script>
   <script>
+    // Check API configuration on load
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!API.isConfigured()) {
+        showAlert('warning', '⚠️ API belum dikonfigurasi. <a href="settings.html" style="color:#856404;text-decoration:underline;">Buka Pengaturan</a> untuk setup API.');
+      }
+    });
+    
     function saveProject() {
+      // Check API first
+      if (!API.isConfigured()) {
+        showAlert('error', 'API belum dikonfigurasi. Silakan buka Pengaturan terlebih dahulu.');
+        return;
+      }
+      
       var nama = Utils.getValue('namaProject');
       var jenis = Utils.getValue('jenisPengadaan');
+      var pagu = parseFloat(Utils.getValue('paguAnggaran')) || 0;
       
       if (!nama) {
         showAlert('error', 'Nama paket wajib diisi');
         return;
       }
       
+      if (pagu <= 0) {
+        showAlert('error', 'Pagu anggaran wajib diisi');
+        return;
+      }
+      
       var btn = document.getElementById('saveBtn');
       btn.disabled = true;
       btn.textContent = 'Menyimpan...';
+      showAlert('info', 'Menghubungi server...');
       
       var data = {
         namaProject: nama,
@@ -176,6 +210,8 @@
         sumberDana: Utils.getValue('sumberDana'),
         unit: Utils.getValue('unit'),
         tahunAnggaran: Utils.getValue('tahunAnggaran'),
+        paguAnggaran: pagu,
+        nomorRup: Utils.getValue('nomorRup'),
         keterangan: Utils.getValue('keterangan'),
         namaPenyedia: Utils.getValue('namaPenyedia'),
         namaDirektur: Utils.getValue('namaDirektur'),
@@ -186,17 +222,25 @@
         status: 'Draft'
       };
       
+      console.log('Saving project:', data);
+      
       API.post('createProject', data)
         .then(function(result) {
+          console.log('Save result:', result);
           btn.disabled = false;
           btn.textContent = '💾 Simpan & Lanjutkan';
           
           if (!result.success) {
-            showAlert('error', result.error || 'Gagal menyimpan');
+            // Check if it's a config error
+            if (result.notConfigured) {
+              showAlert('error', 'API belum dikonfigurasi. <a href="settings.html">Buka Pengaturan</a>');
+            } else {
+              showAlert('error', result.error || 'Gagal menyimpan');
+            }
             return;
           }
           
-          showAlert('success', 'Paket berhasil dibuat!');
+          showAlert('success', '✅ Paket berhasil dibuat!');
           
           // Redirect to detail page
           setTimeout(function() {
@@ -206,7 +250,13 @@
             } else {
               window.location.href = 'projects.html';
             }
-          }, 1000);
+          }, 1500);
+        })
+        .catch(function(err) {
+          console.log('Save error:', err);
+          btn.disabled = false;
+          btn.textContent = '💾 Simpan & Lanjutkan';
+          showAlert('error', 'Error: ' + (err.message || 'Unknown error'));
         });
     }
 
