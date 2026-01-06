@@ -80,8 +80,18 @@
                 <div id="infoUnit" class="form-control" style="background:#f8f9fa;border:none;">-</div>
               </div>
               <div class="form-group">
+                <label class="form-label">Nomor RUP</label>
+                <div id="infoRup" class="form-control" style="background:#f8f9fa;border:none;">-</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
                 <label class="form-label">Pagu Anggaran</label>
                 <div id="infoPagu" class="form-control" style="background:#fff3e0;border:none;font-weight:600;color:#e65100;">-</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sumber Dana</label>
+                <div id="infoSumberDana" class="form-control" style="background:#f8f9fa;border:none;">-</div>
               </div>
             </div>
             <div class="form-group">
@@ -326,6 +336,8 @@
       document.getElementById('infoNama').textContent = p.namaProject || '-';
       document.getElementById('infoJenis').textContent = p.jenisPengadaan || 'Pengadaan Langsung';
       document.getElementById('infoUnit').textContent = p.unit || '-';
+      document.getElementById('infoRup').textContent = p.nomorRup || '-';
+      document.getElementById('infoSumberDana').textContent = p.sumberDana || 'APBN';
       document.getElementById('infoKeterangan').textContent = p.keterangan || '-';
       
       // Pagu Anggaran
