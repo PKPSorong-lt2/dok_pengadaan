@@ -1,6 +1,7 @@
 /**
  * api.js
  * Fetch wrapper for Google Apps Script API
+ * Using text/plain to avoid CORS preflight
  */
 
 var API = (function() {
@@ -23,15 +24,20 @@ var API = (function() {
       });
     }
 
-    return response.json()
-      .then(function(result) {
-        if (typeof result !== 'object' || result === null) {
-          return { success: false, error: 'Invalid response format' };
+    return response.text()
+      .then(function(text) {
+        try {
+          var result = JSON.parse(text);
+          if (typeof result !== 'object' || result === null) {
+            return { success: false, error: 'Invalid response format' };
+          }
+          return result;
+        } catch (e) {
+          return { success: false, error: 'Failed to parse response: ' + text.substring(0, 100) };
         }
-        return result;
       })
       .catch(function() {
-        return { success: false, error: 'Failed to parse response' };
+        return { success: false, error: 'Failed to read response' };
       });
   }
 
@@ -57,10 +63,7 @@ var API = (function() {
 
     return fetch(url, {
       method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Accept': 'application/json'
-      }
+      redirect: 'follow'
     })
     .then(handleResponse)
     .catch(handleNetworkError);
@@ -72,12 +75,13 @@ var API = (function() {
       data: data || {}
     };
 
+    // Use text/plain to avoid CORS preflight
+    // GAS will still receive JSON in e.postData.contents
     return fetch(CONFIG.API_URL, {
       method: 'POST',
-      mode: 'cors',
+      redirect: 'follow',
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Content-Type': 'text/plain;charset=utf-8'
       },
       body: JSON.stringify(body)
     })
