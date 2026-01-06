@@ -138,12 +138,33 @@
         .then(function(result) {
           Utils.hide('loadingState');
           
-          if (!result.success) {
+          console.log('API Response:', result);
+          
+          // Handle berbagai format response
+          if (!result) {
+            console.log('No result from API');
             showEmpty();
             return;
           }
           
-          allProjects = result.data || [];
+          if (!result.success) {
+            console.log('API returned error:', result.error);
+            showEmpty();
+            return;
+          }
+          
+          // Ambil data - pastikan array
+          var data = result.data;
+          if (!data) {
+            data = [];
+          }
+          if (!Array.isArray(data)) {
+            console.log('Data is not array:', typeof data);
+            data = [];
+          }
+          
+          allProjects = data;
+          console.log('Projects loaded:', allProjects.length);
           
           if (allProjects.length === 0) {
             showEmpty();
@@ -152,6 +173,11 @@
           
           renderTable(allProjects);
           Utils.show('tableContainer');
+        })
+        .catch(function(err) {
+          console.log('API Error:', err);
+          Utils.hide('loadingState');
+          showEmpty();
         });
     }
 
