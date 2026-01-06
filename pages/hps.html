@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HPS - Sistem Pengadaan</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📋 SIPBJ</div>
+        <div class="sidebar-subtitle">Sistem Informasi Pengadaan<br>Barang & Jasa</div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="../index.html" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Dashboard</span></a>
+        <div class="menu-title">Pengadaan</div>
+        <a href="projects.html" class="menu-item"><span class="menu-icon">📁</span><span class="menu-text">Daftar Paket</span></a>
+        <div class="menu-title">Dokumen</div>
+        <a href="hps.html" class="menu-item active"><span class="menu-icon">📊</span><span class="menu-text">HPS</span></a>
+        <a href="spk.html" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">SPK/Kontrak</span></a>
+        <a href="bapp.html" class="menu-item"><span class="menu-icon">🔍</span><span class="menu-text">BA Pemeriksaan</span></a>
+        <a href="bast.html" class="menu-item"><span class="menu-icon">🤝</span><span class="menu-text">BAST</span></a>
+        <a href="ba-bayar.html" class="menu-item"><span class="menu-icon">💳</span><span class="menu-text">BA Pembayaran</span></a>
+        <a href="kuitansi.html" class="menu-item"><span class="menu-icon">🧾</span><span class="menu-text">Kuitansi</span></a>
+        <div class="menu-title">Lainnya</div>
+        <a href="settings.html" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Pengaturan</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a> / <span>HPS</span>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">📊 Harga Perkiraan Sendiri (HPS)</h1>
+          <p class="page-subtitle">Buat HPS dengan survey 3 pembanding harga</p>
+        </div>
+      </div>
+
+      <!-- Info HPS -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Informasi HPS</h2>
+        </div>
+        <div class="card-body">
+          <div id="alertBox" class="alert hidden"></div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nomor HPS</label>
+              <input type="text" id="nomorHps" class="form-control" placeholder="HPS-001/PL450/XII/2025">
+              <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="generateNomor()">🔄 Generate</button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tanggal</label>
+              <input type="date" id="tanggalHps" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nama Pekerjaan/Paket</label>
+            <input type="text" id="namaPaket" class="form-control" placeholder="Pengadaan ATK Semester 1 2025">
+          </div>
+        </div>
+      </div>
+
+      <!-- Daftar Item -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Daftar Barang/Jasa & Survey Harga</h2>
+          <button class="btn btn-primary btn-sm" onclick="addItem()">➕ Tambah Item</button>
+        </div>
+        <div class="card-body">
+          <div class="table-container">
+            <table id="itemsTable">
+              <thead>
+                <tr>
+                  <th rowspan="2">No</th>
+                  <th rowspan="2">Nama Barang/Jasa</th>
+                  <th rowspan="2">Spek</th>
+                  <th rowspan="2">Vol</th>
+                  <th rowspan="2">Satuan</th>
+                  <th colspan="3" class="text-center" style="background:#e3f2fd;">Survey Harga (per satuan)</th>
+                  <th rowspan="2" class="text-right">Harga Terendah</th>
+                  <th rowspan="2" class="text-right">Jumlah HPS</th>
+                  <th rowspan="2" class="text-center">Aksi</th>
+                </tr>
+                <tr>
+                  <th class="text-right" style="background:#e3f2fd;font-size:11px;">Vendor 1</th>
+                  <th class="text-right" style="background:#e3f2fd;font-size:11px;">Vendor 2</th>
+                  <th class="text-right" style="background:#e3f2fd;font-size:11px;">Vendor 3</th>
+                </tr>
+              </thead>
+              <tbody id="itemsBody"></tbody>
+              <tfoot>
+                <tr style="font-weight:bold;background:#f8f9fa;">
+                  <td colspan="9" class="text-right">TOTAL HPS:</td>
+                  <td class="text-right" id="totalHps">Rp 0</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          
+          <div id="emptyItems" class="empty-state">
+            <p>Belum ada item. Klik "Tambah Item" untuk memulai.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="card">
+        <div class="card-body">
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="previewHPS()">👁️ Preview HPS</button>
+            <button class="btn btn-success" onclick="printHPS()">🖨️ Cetak</button>
+            <button class="btn btn-secondary" onclick="saveHPS()">💾 Simpan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div id="previewSection" class="card hidden">
+        <div class="card-header">
+          <h2 class="card-title">Preview Dokumen HPS</h2>
+          <button class="btn btn-secondary btn-sm no-print" onclick="window.print()">🖨️ Cetak</button>
+        </div>
+        <div class="card-body">
+          <div class="doc-preview" id="documentPreview"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div id="addItemModal" class="modal-overlay">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Tambah Item & Survey Harga</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group" style="flex:2;">
+            <label class="form-label">Nama Barang/Jasa <span class="required">*</span></label>
+            <input type="text" id="modalNama" class="form-control" placeholder="Kertas HVS A4 80 gram">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">Volume <span class="required">*</span></label>
+            <input type="number" id="modalVolume" class="form-control" min="1" placeholder="10">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label class="form-label">Satuan <span class="required">*</span></label>
+            <input type="text" id="modalSatuan" class="form-control" placeholder="rim">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Spesifikasi</label>
+          <input type="text" id="modalSpek" class="form-control" placeholder="80 gram, 500 lembar per rim">
+        </div>
+        
+        <h4 class="mt-3 mb-2" style="font-size:14px;color:#1976d2;">📊 Survey 3 Pembanding Harga</h4>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Vendor 1 <span class="required">*</span></label>
+            <input type="text" id="modalVendor1" class="form-control" placeholder="Nama toko/vendor">
+            <input type="number" id="modalHarga1" class="form-control mt-1" placeholder="Harga per satuan" min="0" onchange="calcModalLowest()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vendor 2 <span class="required">*</span></label>
+            <input type="text" id="modalVendor2" class="form-control" placeholder="Nama toko/vendor">
+            <input type="number" id="modalHarga2" class="form-control mt-1" placeholder="Harga per satuan" min="0" onchange="calcModalLowest()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vendor 3 <span class="required">*</span></label>
+            <input type="text" id="modalVendor3" class="form-control" placeholder="Nama toko/vendor">
+            <input type="number" id="modalHarga3" class="form-control mt-1" placeholder="Harga per satuan" min="0" onchange="calcModalLowest()">
+          </div>
+        </div>
+        
+        <div style="background:#e8f5e9;padding:15px;border-radius:8px;margin-top:15px;">
+          <div style="display:flex;justify-content:space-between;">
+            <span>Harga Terendah:</span>
+            <strong id="modalLowest">Rp 0</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:18px;color:#2e7d32;">
+            <span>Total HPS Item:</span>
+            <strong id="modalTotal">Rp 0</strong>
+          </div>
+        </div>
+        
+        <div id="modalAlert" class="alert hidden mt-2"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+        <button class="btn btn-primary" onclick="saveModalItem()">💾 Tambahkan</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/institution.js"></script>
+  <script>
+    var hpsItems = [];
+    var editingIndex = -1;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('tanggalHps').value = new Date().toISOString().split('T')[0];
+      renderItems();
+    });
+
+    function generateNomor() {
+      var nomor = Utils.generateNomorDokumen('HPS', INSTITUTION.kodeSatker);
+      document.getElementById('nomorHps').value = nomor;
+    }
+
+    function addItem() {
+      editingIndex = -1;
+      clearModal();
+      document.getElementById('addItemModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('addItemModal').classList.remove('active');
+    }
+
+    function clearModal() {
+      ['modalNama', 'modalVolume', 'modalSatuan', 'modalSpek', 'modalVendor1', 'modalHarga1', 'modalVendor2', 'modalHarga2', 'modalVendor3', 'modalHarga3'].forEach(function(id) {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('modalLowest').textContent = 'Rp 0';
+      document.getElementById('modalTotal').textContent = 'Rp 0';
+      Utils.hide('modalAlert');
+    }
+
+    function calcModalLowest() {
+      var h1 = parseFloat(Utils.getValue('modalHarga1')) || 0;
+      var h2 = parseFloat(Utils.getValue('modalHarga2')) || 0;
+      var h3 = parseFloat(Utils.getValue('modalHarga3')) || 0;
+      var vol = parseFloat(Utils.getValue('modalVolume')) || 1;
+      
+      var prices = [h1, h2, h3].filter(function(p) { return p > 0; });
+      var lowest = prices.length > 0 ? Math.min.apply(null, prices) : 0;
+      var total = lowest * vol;
+      
+      document.getElementById('modalLowest').textContent = Utils.formatRupiah(lowest);
+      document.getElementById('modalTotal').textContent = Utils.formatRupiah(total);
+    }
+
+    function saveModalItem() {
+      var nama = Utils.getValue('modalNama');
+      var volume = parseFloat(Utils.getValue('modalVolume')) || 0;
+      var satuan = Utils.getValue('modalSatuan');
+      var spek = Utils.getValue('modalSpek');
+      var vendor1 = Utils.getValue('modalVendor1');
+      var harga1 = parseFloat(Utils.getValue('modalHarga1')) || 0;
+      var vendor2 = Utils.getValue('modalVendor2');
+      var harga2 = parseFloat(Utils.getValue('modalHarga2')) || 0;
+      var vendor3 = Utils.getValue('modalVendor3');
+      var harga3 = parseFloat(Utils.getValue('modalHarga3')) || 0;
+      
+      if (!nama) { showModalAlert('error', 'Nama barang wajib diisi'); return; }
+      if (volume <= 0) { showModalAlert('error', 'Volume harus lebih dari 0'); return; }
+      if (!satuan) { showModalAlert('error', 'Satuan wajib diisi'); return; }
+      if (!vendor1 || harga1 <= 0) { showModalAlert('error', 'Vendor 1 wajib diisi lengkap'); return; }
+      if (!vendor2 || harga2 <= 0) { showModalAlert('error', 'Vendor 2 wajib diisi lengkap'); return; }
+      if (!vendor3 || harga3 <= 0) { showModalAlert('error', 'Vendor 3 wajib diisi lengkap'); return; }
+      
+      var prices = [harga1, harga2, harga3];
+      var lowest = Math.min.apply(null, prices);
+      var total = lowest * volume;
+      
+      var item = {
+        nama: nama,
+        volume: volume,
+        satuan: satuan,
+        spek: spek,
+        vendor1: vendor1,
+        harga1: harga1,
+        vendor2: vendor2,
+        harga2: harga2,
+        vendor3: vendor3,
+        harga3: harga3,
+        hargaTerendah: lowest,
+        jumlah: total
+      };
+      
+      if (editingIndex >= 0) {
+        hpsItems[editingIndex] = item;
+      } else {
+        hpsItems.push(item);
+      }
+      
+      closeModal();
+      renderItems();
+    }
+
+    function renderItems() {
+      var tbody = document.getElementById('itemsBody');
+      var emptyEl = document.getElementById('emptyItems');
+      
+      if (hpsItems.length === 0) {
+        tbody.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        document.getElementById('totalHps').textContent = 'Rp 0';
+        return;
+      }
+      
+      emptyEl.classList.add('hidden');
+      
+      var html = '';
+      var grandTotal = 0;
+      
+      hpsItems.forEach(function(item, idx) {
+        grandTotal += item.jumlah;
+        html += '<tr>' +
+          '<td>' + (idx + 1) + '</td>' +
+          '<td>' + Utils.escapeHtml(item.nama) + '</td>' +
+          '<td style="font-size:11px;">' + Utils.escapeHtml(item.spek || '-') + '</td>' +
+          '<td class="text-right">' + item.volume + '</td>' +
+          '<td>' + Utils.escapeHtml(item.satuan) + '</td>' +
+          '<td class="text-right" style="font-size:11px;">' + Utils.formatNumber(item.harga1) + '</td>' +
+          '<td class="text-right" style="font-size:11px;">' + Utils.formatNumber(item.harga2) + '</td>' +
+          '<td class="text-right" style="font-size:11px;">' + Utils.formatNumber(item.harga3) + '</td>' +
+          '<td class="text-right">' + Utils.formatRupiah(item.hargaTerendah) + '</td>' +
+          '<td class="text-right"><strong>' + Utils.formatRupiah(item.jumlah) + '</strong></td>' +
+          '<td class="text-center">' +
+          '<button class="btn btn-secondary btn-sm" onclick="editItem(' + idx + ')">✏️</button> ' +
+          '<button class="btn btn-danger btn-sm" onclick="deleteItem(' + idx + ')">🗑️</button>' +
+          '</td></tr>';
+      });
+      
+      tbody.innerHTML = html;
+      document.getElementById('totalHps').textContent = Utils.formatRupiah(grandTotal);
+    }
+
+    function editItem(idx) {
+      editingIndex = idx;
+      var item = hpsItems[idx];
+      
+      Utils.setValue('modalNama', item.nama);
+      Utils.setValue('modalVolume', item.volume);
+      Utils.setValue('modalSatuan', item.satuan);
+      Utils.setValue('modalSpek', item.spek);
+      Utils.setValue('modalVendor1', item.vendor1);
+      Utils.setValue('modalHarga1', item.harga1);
+      Utils.setValue('modalVendor2', item.vendor2);
+      Utils.setValue('modalHarga2', item.harga2);
+      Utils.setValue('modalVendor3', item.vendor3);
+      Utils.setValue('modalHarga3', item.harga3);
+      
+      calcModalLowest();
+      document.getElementById('addItemModal').classList.add('active');
+    }
+
+    function deleteItem(idx) {
+      if (confirm('Hapus item ini?')) {
+        hpsItems.splice(idx, 1);
+        renderItems();
+      }
+    }
+
+    function previewHPS() {
+      if (hpsItems.length === 0) {
+        showAlert('error', 'Tambahkan minimal 1 item');
+        return;
+      }
+      
+      var html = renderHPSDocument();
+      document.getElementById('documentPreview').innerHTML = html;
+      Utils.show('previewSection');
+      document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderHPSDocument() {
+      var nomor = Utils.getValue('nomorHps');
+      var tanggal = Utils.formatDate(Utils.getValue('tanggalHps'));
+      var namaPaket = Utils.getValue('namaPaket');
+      
+      var grandTotal = 0;
+      var itemsHtml = '';
+      
+      hpsItems.forEach(function(item, idx) {
+        grandTotal += item.jumlah;
+        itemsHtml += '<tr>' +
+          '<td style="text-align:center;">' + (idx + 1) + '</td>' +
+          '<td>' + Utils.escapeHtml(item.nama) + (item.spek ? '<br><small>' + Utils.escapeHtml(item.spek) + '</small>' : '') + '</td>' +
+          '<td style="text-align:right;">' + item.volume + '</td>' +
+          '<td>' + Utils.escapeHtml(item.satuan) + '</td>' +
+          '<td style="text-align:right;">' + Utils.formatNumber(item.hargaTerendah) + '</td>' +
+          '<td style="text-align:right;">' + Utils.formatNumber(item.jumlah) + '</td>' +
+          '</tr>';
+      });
+      
+      return '<div class="doc-header">' +
+        '<div style="text-align:center;">' +
+        '<div class="doc-satker">' + INSTITUTION.satker + '</div>' +
+        '</div></div>' +
+        
+        '<div class="doc-title">' +
+        '<h2>HARGA PERKIRAAN SENDIRI (HPS)</h2>' +
+        '<p>Nomor: ' + Utils.escapeHtml(nomor) + '</p>' +
+        '</div>' +
+        
+        '<table style="border:none;margin-bottom:20px;">' +
+        '<tr><td style="border:none;width:150px;">Nama Pekerjaan</td><td style="border:none;">: ' + Utils.escapeHtml(namaPaket) + '</td></tr>' +
+        '<tr><td style="border:none;">Tanggal</td><td style="border:none;">: ' + tanggal + '</td></tr>' +
+        '</table>' +
+        
+        '<table class="doc-table">' +
+        '<thead><tr>' +
+        '<th style="width:40px;">No</th>' +
+        '<th>Uraian Barang/Jasa</th>' +
+        '<th style="width:60px;">Vol</th>' +
+        '<th style="width:60px;">Satuan</th>' +
+        '<th style="width:100px;">Harga Satuan</th>' +
+        '<th style="width:120px;">Jumlah</th>' +
+        '</tr></thead>' +
+        '<tbody>' + itemsHtml + '</tbody>' +
+        '<tfoot><tr style="font-weight:bold;">' +
+        '<td colspan="5" style="text-align:right;">TOTAL HPS</td>' +
+        '<td style="text-align:right;">' + Utils.formatNumber(grandTotal) + '</td>' +
+        '</tr></tfoot></table>' +
+        
+        '<p style="margin-top:10px;"><strong>Terbilang:</strong> <em>' + Utils.formatTerbilang(grandTotal) + '</em></p>' +
+        
+        '<div class="doc-signature" style="margin-top:40px;">' +
+        '<div style="text-align:right;width:50%;margin-left:auto;">' +
+        '<p>Sorong, ' + tanggal + '</p>' +
+        '<p>Pejabat Pembuat Komitmen,</p>' +
+        '<p class="doc-signature-name">' + INSTITUTION.ppinak.nama + '</p>' +
+        '</div></div>';
+    }
+
+    function printHPS() {
+      previewHPS();
+      setTimeout(function() { window.print(); }, 500);
+    }
+
+    function saveHPS() {
+      showAlert('success', 'HPS berhasil disimpan (fitur database akan ditambahkan)');
+    }
+
+    function showAlert(type, msg) {
+      var el = document.getElementById('alertBox');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(function() { el.classList.add('hidden'); }, 3000);
+    }
+
+    function showModalAlert(type, msg) {
+      var el = document.getElementById('modalAlert');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

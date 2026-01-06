@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuitansi - Sistem Pengadaan</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📋 SIPBJ</div>
+        <div class="sidebar-subtitle">Sistem Informasi Pengadaan<br>Barang & Jasa</div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="../index.html" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Dashboard</span></a>
+        <div class="menu-title">Pengadaan</div>
+        <a href="projects.html" class="menu-item"><span class="menu-icon">📁</span><span class="menu-text">Daftar Paket</span></a>
+        <div class="menu-title">Dokumen</div>
+        <a href="hps.html" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">HPS</span></a>
+        <a href="spk.html" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">SPK/Kontrak</span></a>
+        <a href="bapp.html" class="menu-item"><span class="menu-icon">🔍</span><span class="menu-text">BA Pemeriksaan</span></a>
+        <a href="bast.html" class="menu-item"><span class="menu-icon">🤝</span><span class="menu-text">BAST</span></a>
+        <a href="ba-bayar.html" class="menu-item"><span class="menu-icon">💳</span><span class="menu-text">BA Pembayaran</span></a>
+        <a href="kuitansi.html" class="menu-item active"><span class="menu-icon">🧾</span><span class="menu-text">Kuitansi</span></a>
+        <div class="menu-title">Lainnya</div>
+        <a href="settings.html" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Pengaturan</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a> / <span>Kuitansi</span>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">🧾 Kuitansi Pembayaran</h1>
+          <p class="page-subtitle">Buat kuitansi pembayaran pengadaan</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Form Kuitansi</h2>
+        </div>
+        <div class="card-body">
+          <div id="alertBox" class="alert hidden"></div>
+          
+          <form id="kuitansiForm">
+            <!-- Nomor & Tanggal -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nomor Kuitansi <span class="required">*</span></label>
+                <input type="text" id="nomorKuitansi" class="form-control" placeholder="001/Kuitansi/XII/2025">
+                <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="generateNomor()">🔄 Generate</button>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tanggal <span class="required">*</span></label>
+                <input type="date" id="tanggalKuitansi" class="form-control">
+              </div>
+            </div>
+
+            <!-- Penerima -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">SUDAH TERIMA DARI</h3>
+            <div class="form-group">
+              <label class="form-label">Pemberi Dana</label>
+              <textarea id="pemberiDana" class="form-control" rows="2">PEJABAT PEMBUAT KOMITMEN POLITEKNIK KELAUTAN DAN PERIKANAN SORONG</textarea>
+            </div>
+
+            <!-- Nilai -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">JUMLAH UANG</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nilai (Rp) <span class="required">*</span></label>
+                <input type="number" id="nilaiKuitansi" class="form-control" placeholder="78377000" min="0" onchange="updateTerbilang()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Terbilang</label>
+                <input type="text" id="terbilang" class="form-control" readonly style="background:#f8f9fa;">
+              </div>
+            </div>
+
+            <!-- Untuk Pembayaran -->
+            <div class="form-group">
+              <label class="form-label">Untuk Pembayaran <span class="required">*</span></label>
+              <textarea id="untukPembayaran" class="form-control" rows="3" placeholder="Pekerjaan Pemeliharaan Kapal Latih Airaha 02 untuk bulan Desember 2025"></textarea>
+            </div>
+
+            <!-- Penyedia -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">PENERIMA (PENYEDIA)</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nama Penyedia <span class="required">*</span></label>
+                <input type="text" id="namaPenyedia" class="form-control" placeholder="CV. CENDRAWASIH JAYA MANDIRI">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nama Direktur <span class="required">*</span></label>
+                <input type="text" id="namaDirektur" class="form-control" placeholder="FECKY IMANUEL MUGU">
+              </div>
+            </div>
+
+            <!-- PPK -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">PEJABAT PEMBUAT KOMITMEN</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nama PPK</label>
+                <input type="text" id="namaPpk" class="form-control">
+              </div>
+              <div class="form-group">
+                <label class="form-label">NIP</label>
+                <input type="text" id="nipPpk" class="form-control">
+              </div>
+            </div>
+
+            <!-- Daftar Barang/Jasa (Optional) -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">RINCIAN BARANG/JASA (Opsional)</h3>
+            <div id="itemsContainer">
+              <div class="item-row form-row" style="margin-bottom:8px;">
+                <div class="form-group" style="flex:3;">
+                  <input type="text" class="form-control item-nama" placeholder="Nama barang/jasa">
+                </div>
+                <div class="form-group" style="flex:1;">
+                  <input type="number" class="form-control item-volume" placeholder="Vol" min="1">
+                </div>
+                <div class="form-group" style="flex:1;">
+                  <input type="text" class="form-control item-satuan" placeholder="Satuan">
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addItemRow()">+ Tambah Baris</button>
+
+          </form>
+        </div>
+        <div class="card-footer">
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary" onclick="previewDocument()">👁️ Preview</button>
+            <button type="button" class="btn btn-success" onclick="saveAndPrint()">🖨️ Simpan & Cetak</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Section -->
+      <div id="previewSection" class="card hidden">
+        <div class="card-header">
+          <h2 class="card-title">Preview Kuitansi</h2>
+          <button class="btn btn-secondary btn-sm no-print" onclick="window.print()">🖨️ Cetak</button>
+        </div>
+        <div class="card-body">
+          <div class="doc-preview" id="documentPreview"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/institution.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('tanggalKuitansi').value = new Date().toISOString().split('T')[0];
+      document.getElementById('namaPpk').value = INSTITUTION.ppinak.nama;
+      
+      var projectId = Utils.getUrlParam('projectId');
+      if (projectId) loadProjectData(projectId);
+    });
+
+    function loadProjectData(projectId) {
+      API.get('getProjectDetail', { projectId: projectId })
+        .then(function(result) {
+          if (result.success && result.data) {
+            var p = result.data;
+            Utils.setValue('untukPembayaran', 'Pekerjaan ' + p.namaProject);
+            if (p.namaPenyedia) Utils.setValue('namaPenyedia', p.namaPenyedia);
+            if (p.namaDirektur) Utils.setValue('namaDirektur', p.namaDirektur);
+            if (p.nilaiKontrak) {
+              Utils.setValue('nilaiKuitansi', p.nilaiKontrak);
+              updateTerbilang();
+            }
+          }
+        });
+    }
+
+    function generateNomor() {
+      var seq = String(Math.floor(Math.random() * 900) + 100);
+      var now = new Date();
+      var romawi = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+      var nomor = seq + '/Kuitansi/' + romawi[now.getMonth() + 1] + '/' + now.getFullYear();
+      document.getElementById('nomorKuitansi').value = nomor;
+    }
+
+    function updateTerbilang() {
+      var nilai = parseFloat(Utils.getValue('nilaiKuitansi')) || 0;
+      document.getElementById('terbilang').value = Utils.formatTerbilang(nilai);
+    }
+
+    function addItemRow() {
+      var container = document.getElementById('itemsContainer');
+      var row = document.createElement('div');
+      row.className = 'item-row form-row';
+      row.style.marginBottom = '8px';
+      row.innerHTML = '<div class="form-group" style="flex:3;"><input type="text" class="form-control item-nama" placeholder="Nama barang/jasa"></div>' +
+        '<div class="form-group" style="flex:1;"><input type="number" class="form-control item-volume" placeholder="Vol" min="1"></div>' +
+        '<div class="form-group" style="flex:1;"><input type="text" class="form-control item-satuan" placeholder="Satuan"></div>' +
+        '<div class="form-group" style="flex:0;"><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.remove()">×</button></div>';
+      container.appendChild(row);
+    }
+
+    function getItems() {
+      var items = [];
+      var rows = document.querySelectorAll('.item-row');
+      rows.forEach(function(row) {
+        var nama = row.querySelector('.item-nama').value.trim();
+        var volume = row.querySelector('.item-volume').value;
+        var satuan = row.querySelector('.item-satuan').value.trim();
+        if (nama) {
+          items.push({ nama: nama, volume: volume || '', satuan: satuan });
+        }
+      });
+      return items;
+    }
+
+    function previewDocument() {
+      var data = getFormData();
+      if (!validateForm(data)) return;
+      
+      var html = renderKuitansiDocument(data);
+      document.getElementById('documentPreview').innerHTML = html;
+      Utils.show('previewSection');
+      document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function getFormData() {
+      return {
+        nomor: Utils.getValue('nomorKuitansi'),
+        tanggal: Utils.getValue('tanggalKuitansi'),
+        pemberiDana: Utils.getValue('pemberiDana'),
+        nilai: parseFloat(Utils.getValue('nilaiKuitansi')) || 0,
+        terbilang: Utils.getValue('terbilang'),
+        untukPembayaran: Utils.getValue('untukPembayaran'),
+        namaPenyedia: Utils.getValue('namaPenyedia'),
+        namaDirektur: Utils.getValue('namaDirektur'),
+        namaPpk: Utils.getValue('namaPpk'),
+        nipPpk: Utils.getValue('nipPpk'),
+        items: getItems()
+      };
+    }
+
+    function validateForm(data) {
+      if (!data.nomor) { showAlert('error', 'Nomor kuitansi wajib diisi'); return false; }
+      if (!data.tanggal) { showAlert('error', 'Tanggal wajib diisi'); return false; }
+      if (!data.nilai) { showAlert('error', 'Nilai wajib diisi'); return false; }
+      if (!data.untukPembayaran) { showAlert('error', 'Untuk pembayaran wajib diisi'); return false; }
+      if (!data.namaPenyedia) { showAlert('error', 'Nama penyedia wajib diisi'); return false; }
+      return true;
+    }
+
+    function renderKuitansiDocument(data) {
+      var tanggalFormatted = Utils.formatDate(data.tanggal);
+      
+      var itemsHtml = '';
+      if (data.items.length > 0) {
+        itemsHtml = '<table class="doc-table" style="margin-top:10px;"><thead><tr><th>No</th><th>Uraian Barang/Jasa</th><th>Volume</th><th>Satuan</th></tr></thead><tbody>';
+        data.items.forEach(function(item, idx) {
+          itemsHtml += '<tr><td>' + (idx + 1) + '</td><td>' + Utils.escapeHtml(item.nama) + '</td><td>' + item.volume + '</td><td>' + Utils.escapeHtml(item.satuan) + '</td></tr>';
+        });
+        itemsHtml += '</tbody></table>';
+      }
+      
+      return '<div style="text-align:center;margin-bottom:20px;">' +
+        '<div style="font-size:10pt;color:#666;">' + INSTITUTION.satker + '</div>' +
+        '<h2 style="margin:10px 0;font-size:16pt;">KUITANSI</h2>' +
+        '<div>No. : ' + Utils.escapeHtml(data.nomor) + '</div></div>' +
+        
+        '<table style="width:100%;border:none;margin-bottom:20px;">' +
+        '<tr><td style="width:150px;border:none;vertical-align:top;">Sudah terima dari</td><td style="border:none;">: ' + Utils.escapeHtml(data.pemberiDana) + '</td></tr>' +
+        '<tr><td style="border:none;vertical-align:top;">Jumlah Uang</td><td style="border:none;">: <strong>' + Utils.formatRupiah(data.nilai) + '</strong></td></tr>' +
+        '<tr><td style="border:none;vertical-align:top;">Terbilang</td><td style="border:none;">: <em>' + Utils.escapeHtml(data.terbilang) + '</em></td></tr>' +
+        '<tr><td style="border:none;vertical-align:top;">Untuk Pembayaran</td><td style="border:none;">: ' + Utils.escapeHtml(data.untukPembayaran) + '</td></tr>' +
+        '</table>' +
+        
+        itemsHtml +
+        
+        '<div class="doc-signature" style="margin-top:40px;"><div class="doc-signature-row">' +
+        '<div class="doc-signature-col" style="text-align:left;">' +
+        '<p>Mengetahui,</p>' +
+        '<p>a.n. KUASA PENGGUNA ANGGARAN</p>' +
+        '<p>PEJABAT PEMBUAT KOMITMEN</p>' +
+        '<p class="doc-signature-name">' + Utils.escapeHtml(data.namaPpk) + '</p>' +
+        (data.nipPpk ? '<p style="font-size:10pt;">NIP. ' + Utils.escapeHtml(data.nipPpk) + '</p>' : '') +
+        '</div>' +
+        '<div class="doc-signature-col">' +
+        '<p>' + tanggalFormatted + '</p>' +
+        '<p>' + Utils.escapeHtml(data.namaPenyedia) + '</p>' +
+        '<p>&nbsp;</p>' +
+        '<p class="doc-signature-name">' + Utils.escapeHtml(data.namaDirektur) + '</p>' +
+        '<p style="font-size:10pt;">Direktur/Pemilik</p>' +
+        '</div></div></div>' +
+        
+        '<div style="margin-top:30px;padding-top:15px;border-top:1px dashed #ccc;font-size:10pt;">' +
+        '<p>Barang/Pekerjaan tersebut telah diterima/diselesaikan dengan lengkap dan baik.</p>' +
+        '<p style="margin-top:10px;">Tim Pemeriksa/Penerima Hasil Pekerjaan</p>' +
+        '<p style="margin-top:60px;">( _______________________ )</p></div>';
+    }
+
+    function saveAndPrint() {
+      var data = getFormData();
+      if (!validateForm(data)) return;
+      previewDocument();
+      setTimeout(function() { window.print(); }, 500);
+    }
+
+    function showAlert(type, msg) {
+      var el = document.getElementById('alertBox');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(function() { el.classList.add('hidden'); }, 3000);
+    }
+  </script>
+</body>
+</html>

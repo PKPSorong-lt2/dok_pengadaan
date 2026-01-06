@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BA Pembayaran - Sistem Pengadaan</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📋 SIPBJ</div>
+        <div class="sidebar-subtitle">Sistem Informasi Pengadaan<br>Barang & Jasa</div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="../index.html" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Dashboard</span></a>
+        <div class="menu-title">Pengadaan</div>
+        <a href="projects.html" class="menu-item"><span class="menu-icon">📁</span><span class="menu-text">Daftar Paket</span></a>
+        <div class="menu-title">Dokumen</div>
+        <a href="hps.html" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">HPS</span></a>
+        <a href="spk.html" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">SPK/Kontrak</span></a>
+        <a href="bapp.html" class="menu-item"><span class="menu-icon">🔍</span><span class="menu-text">BA Pemeriksaan</span></a>
+        <a href="bast.html" class="menu-item"><span class="menu-icon">🤝</span><span class="menu-text">BAST</span></a>
+        <a href="ba-bayar.html" class="menu-item active"><span class="menu-icon">💳</span><span class="menu-text">BA Pembayaran</span></a>
+        <a href="kuitansi.html" class="menu-item"><span class="menu-icon">🧾</span><span class="menu-text">Kuitansi</span></a>
+        <div class="menu-title">Lainnya</div>
+        <a href="settings.html" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Pengaturan</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a> / <span>BA Pembayaran</span>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">💳 Berita Acara Pembayaran</h1>
+          <p class="page-subtitle">Buat dokumen BA Pembayaran</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Form BA Pembayaran</h2>
+        </div>
+        <div class="card-body">
+          <div id="alertBox" class="alert hidden"></div>
+          
+          <form id="bapForm">
+            <!-- Nomor & Tanggal -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nomor BA Pembayaran <span class="required">*</span></label>
+                <input type="text" id="nomorBap" class="form-control" placeholder="BAP-XXXX/PPK/PL450/XII/2025">
+                <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="generateNomor()">🔄 Generate</button>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tanggal <span class="required">*</span></label>
+                <input type="date" id="tanggalBap" class="form-control">
+              </div>
+            </div>
+
+            <!-- Pekerjaan -->
+            <div class="form-group">
+              <label class="form-label">Nama Pekerjaan <span class="required">*</span></label>
+              <input type="text" id="namaPekerjaan" class="form-control" placeholder="Pemeliharaan Kapal Latih Airaha 02">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Periode/Bulan</label>
+              <input type="text" id="periodePekerjaan" class="form-control" placeholder="Desember 2025">
+            </div>
+
+            <!-- Pihak Pertama (PPK) -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">PIHAK PERTAMA (PPK)</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nama PPK <span class="required">*</span></label>
+                <input type="text" id="namaPpk" class="form-control">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Jabatan</label>
+                <input type="text" id="jabatanPpk" class="form-control" value="Pranata Keuangan Mahir">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Dasar SK</label>
+              <input type="text" id="skPpk" class="form-control">
+            </div>
+
+            <!-- Pihak Kedua (Penyedia) -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">PIHAK KEDUA (PENYEDIA)</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nama Penyedia <span class="required">*</span></label>
+                <input type="text" id="namaPenyedia" class="form-control" placeholder="CV. CENDRAWASIH JAYA MANDIRI">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nama Direktur/Pemilik <span class="required">*</span></label>
+                <input type="text" id="namaDirektur" class="form-control" placeholder="FECKY IMANUEL MUGU">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Alamat Penyedia</label>
+              <input type="text" id="alamatPenyedia" class="form-control" placeholder="Jl. Dewi Sartika RT. 005 RW.004 Majener Salawati">
+            </div>
+
+            <!-- Nilai Pembayaran -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">NILAI PEMBAYARAN</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nilai Pembayaran (Rp) <span class="required">*</span></label>
+                <input type="number" id="nilaiPembayaran" class="form-control" placeholder="78377000" min="0" onchange="updateTerbilang()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Terbilang</label>
+                <input type="text" id="terbilang" class="form-control" readonly style="background:#f8f9fa;">
+              </div>
+            </div>
+
+            <!-- Referensi BAST -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">REFERENSI DOKUMEN</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nomor BAST</label>
+                <input type="text" id="nomorBast" class="form-control" placeholder="BAST-XXXX/PPK/PL450/XII/2025">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tanggal BAST</label>
+                <input type="date" id="tanggalBast" class="form-control">
+              </div>
+            </div>
+
+          </form>
+        </div>
+        <div class="card-footer">
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary" onclick="previewDocument()">👁️ Preview</button>
+            <button type="button" class="btn btn-success" onclick="saveAndPrint()">🖨️ Simpan & Cetak</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Section -->
+      <div id="previewSection" class="card hidden">
+        <div class="card-header">
+          <h2 class="card-title">Preview Dokumen</h2>
+          <button class="btn btn-secondary btn-sm no-print" onclick="window.print()">🖨️ Cetak</button>
+        </div>
+        <div class="card-body">
+          <div class="doc-preview" id="documentPreview"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/institution.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('tanggalBap').value = new Date().toISOString().split('T')[0];
+      document.getElementById('namaPpk').value = INSTITUTION.ppinak.nama;
+      document.getElementById('jabatanPpk').value = INSTITUTION.ppinak.jabatan;
+      document.getElementById('skPpk').value = INSTITUTION.ppinak.skJabatan;
+      
+      var projectId = Utils.getUrlParam('projectId');
+      if (projectId) loadProjectData(projectId);
+    });
+
+    function loadProjectData(projectId) {
+      API.get('getProjectDetail', { projectId: projectId })
+        .then(function(result) {
+          if (result.success && result.data) {
+            var p = result.data;
+            Utils.setValue('namaPekerjaan', p.namaProject);
+            if (p.namaPenyedia) Utils.setValue('namaPenyedia', p.namaPenyedia);
+            if (p.namaDirektur) Utils.setValue('namaDirektur', p.namaDirektur);
+            if (p.alamatPenyedia) Utils.setValue('alamatPenyedia', p.alamatPenyedia);
+            if (p.nilaiKontrak) {
+              Utils.setValue('nilaiPembayaran', p.nilaiKontrak);
+              updateTerbilang();
+            }
+          }
+        });
+    }
+
+    function generateNomor() {
+      var nomor = Utils.generateNomorDokumen('BAP', INSTITUTION.kodeSatker);
+      document.getElementById('nomorBap').value = nomor;
+    }
+
+    function updateTerbilang() {
+      var nilai = parseFloat(Utils.getValue('nilaiPembayaran')) || 0;
+      document.getElementById('terbilang').value = Utils.formatTerbilang(nilai);
+    }
+
+    function previewDocument() {
+      var data = getFormData();
+      if (!validateForm(data)) return;
+      
+      var html = renderBAPDocument(data);
+      document.getElementById('documentPreview').innerHTML = html;
+      Utils.show('previewSection');
+      document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function getFormData() {
+      return {
+        nomor: Utils.getValue('nomorBap'),
+        tanggal: Utils.getValue('tanggalBap'),
+        namaPekerjaan: Utils.getValue('namaPekerjaan'),
+        periode: Utils.getValue('periodePekerjaan'),
+        namaPpk: Utils.getValue('namaPpk'),
+        jabatanPpk: Utils.getValue('jabatanPpk'),
+        skPpk: Utils.getValue('skPpk'),
+        namaPenyedia: Utils.getValue('namaPenyedia'),
+        namaDirektur: Utils.getValue('namaDirektur'),
+        alamatPenyedia: Utils.getValue('alamatPenyedia'),
+        nilaiPembayaran: parseFloat(Utils.getValue('nilaiPembayaran')) || 0,
+        terbilang: Utils.getValue('terbilang'),
+        nomorBast: Utils.getValue('nomorBast'),
+        tanggalBast: Utils.getValue('tanggalBast')
+      };
+    }
+
+    function validateForm(data) {
+      if (!data.nomor) { showAlert('error', 'Nomor BA Pembayaran wajib diisi'); return false; }
+      if (!data.tanggal) { showAlert('error', 'Tanggal wajib diisi'); return false; }
+      if (!data.namaPekerjaan) { showAlert('error', 'Nama pekerjaan wajib diisi'); return false; }
+      if (!data.namaPpk) { showAlert('error', 'Nama PPK wajib diisi'); return false; }
+      if (!data.namaPenyedia) { showAlert('error', 'Nama penyedia wajib diisi'); return false; }
+      if (!data.nilaiPembayaran) { showAlert('error', 'Nilai pembayaran wajib diisi'); return false; }
+      return true;
+    }
+
+    function renderBAPDocument(data) {
+      var tanggalFormatted = Utils.formatDate(data.tanggal);
+      var tanggalBastFormatted = data.tanggalBast ? Utils.formatDate(data.tanggalBast) : '-';
+      
+      return '<div class="doc-header">' +
+        '<table style="width:100%;border:none;">' +
+        '<tr><td style="width:80px;vertical-align:top;border:none;padding:0;"></td>' +
+        '<td style="text-align:center;border:none;padding:0;">' +
+        '<div class="doc-kementerian">' + INSTITUTION.kementerian + '</div>' +
+        '<div class="doc-badan">' + INSTITUTION.badan + '</div>' +
+        '<div class="doc-satker">' + INSTITUTION.satker + '</div>' +
+        '<div class="doc-alamat">' + INSTITUTION.alamat + '</div>' +
+        '<div class="doc-alamat">' + INSTITUTION.kotakPos + '</div>' +
+        '<div class="doc-alamat">LAMAN ' + INSTITUTION.website + ' SUREL ' + INSTITUTION.email + '</div>' +
+        '</td></tr></table></div>' +
+        
+        '<div class="doc-title">' +
+        '<h2>BERITA ACARA PEMBAYARAN</h2>' +
+        '<p><strong><em>' + Utils.escapeHtml(data.namaPekerjaan) + '</em></strong></p>' +
+        '<p>Nomor: ' + Utils.escapeHtml(data.nomor) + '</p></div>' +
+        
+        '<div class="doc-body">' +
+        '<p>Pada hari ini tanggal ' + tanggalFormatted + ', kami yang bertanda tangan di bawah ini :</p>' +
+        
+        '<table style="margin:20px 0;border:none;width:100%;">' +
+        '<tr><td style="width:20px;vertical-align:top;border:none;">1.</td>' +
+        '<td style="border:none;"><strong>' + Utils.escapeHtml(data.namaPpk) + '</strong><br>' +
+        Utils.escapeHtml(data.jabatanPpk) + ' pada ' + INSTITUTION.satker + ' berdasarkan Keputusan ' + Utils.escapeHtml(data.skPpk) + ', dalam hal ini bertindak untuk dan atas nama ' + INSTITUTION.satker + ' ' + INSTITUTION.kementerian + ', selanjutnya disebut <strong>PIHAK PERTAMA</strong></td></tr>' +
+        '<tr><td colspan="2" style="border:none;height:15px;"></td></tr>' +
+        '<tr><td style="width:20px;vertical-align:top;border:none;">2.</td>' +
+        '<td style="border:none;"><strong>' + Utils.escapeHtml(data.namaDirektur) + '</strong><br>' +
+        'Direktur, bertindak untuk dan atas nama ' + Utils.escapeHtml(data.namaPenyedia) + ', yang berkedudukan di ' + Utils.escapeHtml(data.alamatPenyedia) + ', selanjutnya disebut <strong>PIHAK KEDUA</strong>.</td></tr></table>' +
+        
+        '<p>Menyatakan bahwa:</p>' +
+        
+        '<table style="margin:20px 0;border:none;width:100%;">' +
+        '<tr><td style="width:20px;vertical-align:top;border:none;">1.</td>' +
+        '<td style="border:none;"><strong>PIHAK KEDUA</strong> telah menyelesaikan pekerjaan: ' + Utils.escapeHtml(data.namaPekerjaan) + ' untuk bulan ' + Utils.escapeHtml(data.periode) + ' sesuai dengan BAST Nomor ' + Utils.escapeHtml(data.nomorBast) + ' tanggal ' + tanggalBastFormatted + '.</td></tr>' +
+        '<tr><td colspan="2" style="border:none;height:10px;"></td></tr>' +
+        '<tr><td style="width:20px;vertical-align:top;border:none;">2.</td>' +
+        '<td style="border:none;"><strong>PIHAK PERTAMA</strong> telah menerima dengan baik hasil pekerjaan tersebut dan menyetujui pembayaran kepada <strong>PIHAK KEDUA</strong> sebesar <strong>' + Utils.formatRupiah(data.nilaiPembayaran) + '</strong> (<em>' + Utils.escapeHtml(data.terbilang).toLowerCase() + '</em>).</td></tr></table>' +
+        
+        '<p>Demikian Berita Acara Pembayaran ini dibuat untuk dipergunakan sebagaimana mestinya.</p></div>' +
+        
+        '<div class="doc-signature"><div class="doc-signature-row">' +
+        '<div class="doc-signature-col"><p>PIHAK KEDUA,</p><p class="doc-signature-name">' + Utils.escapeHtml(data.namaDirektur) + '</p></div>' +
+        '<div class="doc-signature-col"><p>PIHAK PERTAMA,</p><p class="doc-signature-name">' + Utils.escapeHtml(data.namaPpk) + '</p></div>' +
+        '</div></div>';
+    }
+
+    function saveAndPrint() {
+      var data = getFormData();
+      if (!validateForm(data)) return;
+      previewDocument();
+      setTimeout(function() { window.print(); }, 500);
+    }
+
+    function showAlert(type, msg) {
+      var el = document.getElementById('alertBox');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(function() { el.classList.add('hidden'); }, 3000);
+    }
+  </script>
+</body>
+</html>

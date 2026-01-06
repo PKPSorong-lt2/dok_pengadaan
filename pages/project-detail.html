@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Paket - Sistem Pengadaan</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📋 SIPBJ</div>
+        <div class="sidebar-subtitle">Sistem Informasi Pengadaan<br>Barang & Jasa</div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="../index.html" class="menu-item">
+          <span class="menu-icon">🏠</span>
+          <span class="menu-text">Dashboard</span>
+        </a>
+        <div class="menu-title">Pengadaan</div>
+        <a href="projects.html" class="menu-item active">
+          <span class="menu-icon">📁</span>
+          <span class="menu-text">Daftar Paket</span>
+        </a>
+        <a href="project-new.html" class="menu-item">
+          <span class="menu-icon">➕</span>
+          <span class="menu-text">Buat Paket Baru</span>
+        </a>
+        <div class="menu-title">Dokumen</div>
+        <a href="hps.html" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">HPS</span></a>
+        <a href="spk.html" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">SPK/Kontrak</span></a>
+        <a href="bapp.html" class="menu-item"><span class="menu-icon">🔍</span><span class="menu-text">BA Pemeriksaan</span></a>
+        <a href="bast.html" class="menu-item"><span class="menu-icon">🤝</span><span class="menu-text">BAST</span></a>
+        <a href="ba-bayar.html" class="menu-item"><span class="menu-icon">💳</span><span class="menu-text">BA Pembayaran</span></a>
+        <a href="kuitansi.html" class="menu-item"><span class="menu-icon">🧾</span><span class="menu-text">Kuitansi</span></a>
+        <div class="menu-title">Lainnya</div>
+        <a href="vendors.html" class="menu-item"><span class="menu-icon">🏪</span><span class="menu-text">Data Penyedia</span></a>
+        <a href="settings.html" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Pengaturan</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a> / <a href="projects.html">Daftar Paket</a> / <span id="breadcrumbTitle">Detail</span>
+      </div>
+
+      <!-- Loading -->
+      <div id="loadingState" class="card">
+        <div class="card-body">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <p class="mt-2">Memuat data...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="errorState" class="card hidden">
+        <div class="card-body">
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <h3 class="empty-state-title">Gagal Memuat Data</h3>
+            <p class="empty-state-text" id="errorMessage">Terjadi kesalahan</p>
+            <a href="projects.html" class="btn btn-secondary">← Kembali</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div id="contentContainer" class="hidden">
+        
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="pageTitle">Detail Paket</h1>
+            <p class="page-subtitle" id="projectId">-</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Cetak</button>
+            <a href="projects.html" class="btn btn-secondary">← Kembali</a>
+          </div>
+        </div>
+
+        <!-- Workflow Steps -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Progress Pengadaan</h2>
+          </div>
+          <div class="card-body">
+            <div class="workflow-steps" id="workflowSteps">
+              <div class="workflow-step">
+                <div class="step-circle" id="step1">1</div>
+                <div class="step-label">HPS</div>
+              </div>
+              <div class="workflow-step">
+                <div class="step-circle" id="step2">2</div>
+                <div class="step-label">SPK</div>
+              </div>
+              <div class="workflow-step">
+                <div class="step-circle" id="step3">3</div>
+                <div class="step-label">Pemeriksaan</div>
+              </div>
+              <div class="workflow-step">
+                <div class="step-circle" id="step4">4</div>
+                <div class="step-label">BAST</div>
+              </div>
+              <div class="workflow-step">
+                <div class="step-circle" id="step5">5</div>
+                <div class="step-label">Pembayaran</div>
+              </div>
+              <div class="workflow-step">
+                <div class="step-circle" id="step6">6</div>
+                <div class="step-label">Selesai</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Info -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Informasi Paket</h2>
+            <button class="btn btn-secondary btn-sm" onclick="editProject()">✏️ Edit</button>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nama Paket</label>
+                <div id="infoNamaPaket" class="form-control" style="background:#f8f9fa;border:none;">-</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Jenis Pengadaan</label>
+                <div id="infoJenis" class="form-control" style="background:#f8f9fa;border:none;">-</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Unit Pengusul</label>
+                <div id="infoUnit" class="form-control" style="background:#f8f9fa;border:none;">-</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sumber Dana</label>
+                <div id="infoSumberDana" class="form-control" style="background:#f8f9fa;border:none;">-</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Penyedia</label>
+                <div id="infoPenyedia" class="form-control" style="background:#f8f9fa;border:none;">-</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nilai Kontrak</label>
+                <div id="infoNilai" class="form-control" style="background:#f8f9fa;border:none;">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents Section -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Dokumen Pengadaan</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Jenis Dokumen</th>
+                    <th>Nomor</th>
+                    <th>Tanggal</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="documentsTable">
+                  <tr>
+                    <td>1</td>
+                    <td>📊 HPS (Harga Perkiraan Sendiri)</td>
+                    <td id="docHpsNomor">-</td>
+                    <td id="docHpsTanggal">-</td>
+                    <td class="text-center"><span class="badge badge-secondary" id="docHpsStatus">Belum</span></td>
+                    <td class="text-center">
+                      <button class="btn btn-primary btn-sm" onclick="createDocument('hps')">Buat</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>📝 SPK/Surat Perjanjian</td>
+                    <td id="docSpkNomor">-</td>
+                    <td id="docSpkTanggal">-</td>
+                    <td class="text-center"><span class="badge badge-secondary" id="docSpkStatus">Belum</span></td>
+                    <td class="text-center">
+                      <button class="btn btn-primary btn-sm" onclick="createDocument('spk')">Buat</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>🔍 BA Pemeriksaan Pekerjaan</td>
+                    <td id="docBappNomor">-</td>
+                    <td id="docBappTanggal">-</td>
+                    <td class="text-center"><span class="badge badge-secondary" id="docBappStatus">Belum</span></td>
+                    <td class="text-center">
+                      <button class="btn btn-primary btn-sm" onclick="createDocument('bapp')">Buat</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>🤝 BAST (Berita Acara Serah Terima)</td>
+                    <td id="docBastNomor">-</td>
+                    <td id="docBastTanggal">-</td>
+                    <td class="text-center"><span class="badge badge-secondary" id="docBastStatus">Belum</span></td>
+                    <td class="text-center">
+                      <button class="btn btn-primary btn-sm" onclick="createDocument('bast')">Buat</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>💳 BA Pembayaran</td>
+                    <td id="docBapNomor">-</td>
+                    <td id="docBapTanggal">-</td>
+                    <td class="text-center"><span class="badge badge-secondary" id="docBapStatus">Belum</span></td>
+                    <td class="text-center">
+                      <button class="btn btn-primary btn-sm" onclick="createDocument('ba-bayar')">Buat</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>🧾 Kuitansi</td>
+                    <td id="docKuitansiNomor">-</td>
+                    <td id="docKuitansiTanggal">-</td>
+                    <td class="text-center"><span class="badge badge-secondary" id="docKuitansiStatus">Belum</span></td>
+                    <td class="text-center">
+                      <button class="btn btn-primary btn-sm" onclick="createDocument('kuitansi')">Buat</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>7</td>
+                    <td>💵 Bukti Setor Pajak (SSP)</td>
+                    <td id="docPajakNomor">-</td>
+                    <td id="docPajakTanggal">-</td>
+                    <td class="text-center"><span class="badge badge-secondary" id="docPajakStatus">Belum</span></td>
+                    <td class="text-center">
+                      <button class="btn btn-primary btn-sm" onclick="createDocument('pajak')">Buat</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items Section -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Daftar Barang/Jasa</h2>
+            <button class="btn btn-primary btn-sm" onclick="openAddItemModal()">➕ Tambah Item</button>
+          </div>
+          <div class="card-body">
+            <div id="itemsEmpty" class="empty-state hidden">
+              <p>Belum ada item. Klik tombol "Tambah Item" untuk menambahkan.</p>
+            </div>
+            <div id="itemsTableContainer" class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Nama Barang/Jasa</th>
+                    <th>Spesifikasi</th>
+                    <th class="text-right">Vol</th>
+                    <th>Satuan</th>
+                    <th class="text-right">Harga</th>
+                    <th class="text-right">Jumlah</th>
+                    <th class="text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="itemsTable"></tbody>
+                <tfoot>
+                  <tr style="font-weight:bold;background:#f8f9fa;">
+                    <td colspan="6" class="text-right">Total:</td>
+                    <td class="text-right" id="itemsTotal">Rp 0</td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div id="addItemModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Tambah Item Barang/Jasa</h3>
+        <button class="modal-close" onclick="closeAddItemModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nama Barang/Jasa <span class="required">*</span></label>
+          <input type="text" id="itemNama" class="form-control" placeholder="Contoh: Kertas HVS A4 80 gram">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Spesifikasi</label>
+          <textarea id="itemSpek" class="form-control" rows="2" placeholder="Detail spesifikasi barang/jasa"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Volume <span class="required">*</span></label>
+            <input type="number" id="itemVolume" class="form-control" placeholder="10" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Satuan <span class="required">*</span></label>
+            <input type="text" id="itemSatuan" class="form-control" placeholder="rim">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Satuan <span class="required">*</span></label>
+            <input type="number" id="itemHarga" class="form-control" placeholder="50000" min="0">
+          </div>
+        </div>
+        <div id="itemAlert" class="alert hidden"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAddItemModal()">Batal</button>
+        <button class="btn btn-primary" id="saveItemBtn" onclick="saveItem()">💾 Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/institution.js"></script>
+  <script>
+    var currentProject = null;
+    var currentProjectId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      currentProjectId = Utils.getUrlParam('id');
+      if (!currentProjectId) {
+        showError('ID Paket tidak ditemukan');
+        return;
+      }
+      loadProject();
+    });
+
+    function loadProject() {
+      API.get('getProjectDetail', { projectId: currentProjectId })
+        .then(function(result) {
+          Utils.hide('loadingState');
+          
+          if (!result.success) {
+            showError(result.error || 'Gagal memuat data');
+            return;
+          }
+          
+          currentProject = result.data;
+          if (!currentProject) {
+            showError('Paket tidak ditemukan');
+            return;
+          }
+          
+          renderProject();
+          Utils.show('contentContainer');
+        });
+    }
+
+    function renderProject() {
+      var p = currentProject;
+      
+      // Header
+      Utils.setText('pageTitle', p.namaProject);
+      Utils.setText('projectId', p.projectId);
+      Utils.setText('breadcrumbTitle', p.namaProject);
+      
+      // Info
+      Utils.setText('infoNamaPaket', p.namaProject);
+      Utils.setText('infoJenis', p.jenisPengadaan || 'Pengadaan Langsung');
+      Utils.setText('infoUnit', p.unit);
+      Utils.setText('infoSumberDana', p.sumberDana || 'APBN');
+      Utils.setText('infoPenyedia', p.namaPenyedia || '-');
+      Utils.setText('infoNilai', Utils.formatRupiah(p.nilaiKontrak || 0));
+      
+      // Items
+      renderItems(p.items || []);
+      
+      // Workflow
+      updateWorkflow(p);
+      
+      // Documents
+      updateDocuments(p.documents || {});
+    }
+
+    function renderItems(items) {
+      var tbody = document.getElementById('itemsTable');
+      
+      if (!items || items.length === 0) {
+        Utils.show('itemsEmpty');
+        Utils.hide('itemsTableContainer');
+        return;
+      }
+      
+      Utils.hide('itemsEmpty');
+      Utils.show('itemsTableContainer');
+      
+      var html = '';
+      var total = 0;
+      
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var jumlah = (item.volume || 0) * (item.harga || 0);
+        total += jumlah;
+        
+        html += '<tr>';
+        html += '<td>' + (i + 1) + '</td>';
+        html += '<td>' + Utils.escapeHtml(item.namaBarang) + '</td>';
+        html += '<td>' + Utils.escapeHtml(item.spesifikasi || '-') + '</td>';
+        html += '<td class="text-right">' + (item.volume || 0) + '</td>';
+        html += '<td>' + Utils.escapeHtml(item.satuan) + '</td>';
+        html += '<td class="text-right">' + Utils.formatRupiah(item.harga || 0) + '</td>';
+        html += '<td class="text-right">' + Utils.formatRupiah(jumlah) + '</td>';
+        html += '<td class="text-center"><button class="btn btn-danger btn-sm" onclick="deleteItem(\'' + item.itemId + '\')">🗑️</button></td>';
+        html += '</tr>';
+      }
+      
+      tbody.innerHTML = html;
+      Utils.setText('itemsTotal', Utils.formatRupiah(total));
+    }
+
+    function updateWorkflow(p) {
+      var step = 1;
+      if (p.documents) {
+        if (p.documents.hps) step = 2;
+        if (p.documents.spk) step = 3;
+        if (p.documents.bapp) step = 4;
+        if (p.documents.bast) step = 5;
+        if (p.documents.kuitansi) step = 6;
+      }
+      
+      for (var i = 1; i <= 6; i++) {
+        var el = document.getElementById('step' + i);
+        if (el) {
+          el.classList.remove('active', 'completed');
+          if (i < step) el.classList.add('completed');
+          else if (i === step) el.classList.add('active');
+        }
+      }
+    }
+
+    function updateDocuments(docs) {
+      var docTypes = ['hps', 'spk', 'bapp', 'bast', 'bap', 'kuitansi', 'pajak'];
+      docTypes.forEach(function(type) {
+        var doc = docs[type];
+        var statusEl = document.getElementById('doc' + capitalize(type) + 'Status');
+        var nomorEl = document.getElementById('doc' + capitalize(type) + 'Nomor');
+        var tanggalEl = document.getElementById('doc' + capitalize(type) + 'Tanggal');
+        
+        if (doc) {
+          if (statusEl) { statusEl.textContent = 'Selesai'; statusEl.className = 'badge badge-success'; }
+          if (nomorEl) nomorEl.textContent = doc.nomor || '-';
+          if (tanggalEl) tanggalEl.textContent = Utils.formatDateShort(doc.tanggal);
+        }
+      });
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function showError(msg) {
+      Utils.hide('loadingState');
+      Utils.setText('errorMessage', msg);
+      Utils.show('errorState');
+    }
+
+    function createDocument(type) {
+      window.location.href = type + '.html?projectId=' + currentProjectId;
+    }
+
+    function editProject() {
+      window.location.href = 'project-edit.html?id=' + currentProjectId;
+    }
+
+    // Item Modal
+    function openAddItemModal() {
+      document.getElementById('itemNama').value = '';
+      document.getElementById('itemSpek').value = '';
+      document.getElementById('itemVolume').value = '';
+      document.getElementById('itemSatuan').value = '';
+      document.getElementById('itemHarga').value = '';
+      Utils.hide('itemAlert');
+      document.getElementById('addItemModal').classList.add('active');
+    }
+
+    function closeAddItemModal() {
+      document.getElementById('addItemModal').classList.remove('active');
+    }
+
+    function saveItem() {
+      var nama = Utils.getValue('itemNama');
+      var spek = Utils.getValue('itemSpek');
+      var volume = Utils.getValue('itemVolume');
+      var satuan = Utils.getValue('itemSatuan');
+      var harga = Utils.getValue('itemHarga');
+      
+      if (!nama) { showItemAlert('error', 'Nama barang wajib diisi'); return; }
+      if (!volume || volume <= 0) { showItemAlert('error', 'Volume harus lebih dari 0'); return; }
+      if (!satuan) { showItemAlert('error', 'Satuan wajib diisi'); return; }
+      if (!harga || harga < 0) { showItemAlert('error', 'Harga tidak valid'); return; }
+      
+      var btn = document.getElementById('saveItemBtn');
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      
+      API.post('addItem', {
+        projectId: currentProjectId,
+        namaBarang: nama,
+        spesifikasi: spek,
+        volume: parseInt(volume),
+        satuan: satuan,
+        harga: parseFloat(harga)
+      })
+      .then(function(result) {
+        btn.disabled = false;
+        btn.textContent = '💾 Simpan';
+        
+        if (!result.success) {
+          showItemAlert('error', result.error);
+          return;
+        }
+        
+        closeAddItemModal();
+        loadProject();
+      });
+    }
+
+    function deleteItem(itemId) {
+      if (!confirm('Hapus item ini?')) return;
+      
+      API.post('deleteItem', { projectId: currentProjectId, itemId: itemId })
+        .then(function(result) {
+          if (result.success) loadProject();
+          else alert(result.error);
+        });
+    }
+
+    function showItemAlert(type, msg) {
+      var el = document.getElementById('itemAlert');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

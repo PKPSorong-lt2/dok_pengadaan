@@ -3,111 +3,244 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Procurement System</title>
+  <title>Dashboard - Sistem Pengadaan</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="navbar-inner">
-      <a href="index.html" class="navbar-brand">📋 Procurement System</a>
-      <ul class="navbar-nav">
-        <li><a href="index.html" class="active">Dashboard</a></li>
-        <li><a href="create.html">Buat Project</a></li>
-        <li><a href="settings.html">⚙️</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <!-- Main Content -->
-  <div class="container">
-
-    <!-- Page Header -->
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">📊 Dashboard</h1>
-        <p class="page-subtitle">Daftar semua project pengadaan</p>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📋 SIPBJ</div>
+        <div class="sidebar-subtitle">Sistem Informasi Pengadaan<br>Barang & Jasa</div>
       </div>
-      <a href="create.html" class="btn btn-primary">+ Buat Project</a>
-    </div>
+      
+      <nav class="sidebar-menu">
+        <a href="index.html" class="menu-item active">
+          <span class="menu-icon">🏠</span>
+          <span class="menu-text">Dashboard</span>
+        </a>
+        
+        <div class="menu-title">Pengadaan</div>
+        <a href="pages/projects.html" class="menu-item">
+          <span class="menu-icon">📁</span>
+          <span class="menu-text">Daftar Paket</span>
+        </a>
+        <a href="pages/project-new.html" class="menu-item">
+          <span class="menu-icon">➕</span>
+          <span class="menu-text">Buat Paket Baru</span>
+        </a>
+        
+        <div class="menu-title">Dokumen</div>
+        <a href="pages/hps.html" class="menu-item">
+          <span class="menu-icon">📊</span>
+          <span class="menu-text">HPS</span>
+        </a>
+        <a href="pages/spk.html" class="menu-item">
+          <span class="menu-icon">📝</span>
+          <span class="menu-text">SPK/Kontrak</span>
+        </a>
+        <a href="pages/bapp.html" class="menu-item">
+          <span class="menu-icon">🔍</span>
+          <span class="menu-text">BA Pemeriksaan</span>
+        </a>
+        <a href="pages/bast.html" class="menu-item">
+          <span class="menu-icon">🤝</span>
+          <span class="menu-text">BAST</span>
+        </a>
+        <a href="pages/ba-bayar.html" class="menu-item">
+          <span class="menu-icon">💳</span>
+          <span class="menu-text">BA Pembayaran</span>
+        </a>
+        <a href="pages/kuitansi.html" class="menu-item">
+          <span class="menu-icon">🧾</span>
+          <span class="menu-text">Kuitansi</span>
+        </a>
+        
+        <div class="menu-title">Lainnya</div>
+        <a href="pages/vendors.html" class="menu-item">
+          <span class="menu-icon">🏪</span>
+          <span class="menu-text">Data Penyedia</span>
+        </a>
+        <a href="pages/reports.html" class="menu-item">
+          <span class="menu-icon">📈</span>
+          <span class="menu-text">Laporan</span>
+        </a>
+        <a href="pages/settings.html" class="menu-item">
+          <span class="menu-icon">⚙️</span>
+          <span class="menu-text">Pengaturan</span>
+        </a>
+      </nav>
+    </aside>
 
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">📁</div>
-        <div class="stat-value" id="statTotalProjects">-</div>
-        <div class="stat-label">Total Project</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">📦</div>
-        <div class="stat-value" id="statTotalItems">-</div>
-        <div class="stat-label">Total Items</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">✅</div>
-        <div class="stat-value" id="statSurveyDone">-</div>
-        <div class="stat-label">Survey Selesai</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">📈</div>
-        <div class="stat-value" id="statProgress">-</div>
-        <div class="stat-label">Progress</div>
-      </div>
-    </div>
-
-    <!-- Projects Card -->
-    <div class="card">
-      <h2 class="card-title">Daftar Project</h2>
-
-      <!-- Loading State -->
-      <div id="loadingState" class="loading-state">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Memuat data...</p>
-      </div>
-
-      <!-- Error State -->
-      <div id="errorState" class="error-state" style="display: none;">
-        <div class="error-state-icon">⚠️</div>
-        <h3 class="error-state-title">Gagal Memuat Data</h3>
-        <p class="error-state-text" id="errorMessage">Terjadi kesalahan</p>
-      </div>
-
-      <!-- Empty State -->
-      <div id="emptyState" class="empty-state" style="display: none;">
-        <div class="empty-state-icon">📭</div>
-        <h3 class="empty-state-title">Belum ada project</h3>
-        <p class="empty-state-text">Buat project pertama Anda untuk memulai</p>
-        <a href="create.html" class="btn btn-primary">+ Buat Project</a>
-      </div>
-
-      <!-- Table -->
-      <div id="tableContainer" class="table-responsive" style="display: none;">
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama Project</th>
-              <th>Unit</th>
-              <th>Status</th>
-              <th>Total Items</th>
-              <th>Survey Done</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="projectsTableBody"></tbody>
-        </table>
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Selamat datang di Sistem Pengadaan Barang & Jasa</p>
+        </div>
+        <a href="pages/project-new.html" class="btn btn-primary">
+          <span>➕</span> Buat Paket Baru
+        </a>
       </div>
 
-    </div>
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card primary">
+          <div class="stat-icon">📁</div>
+          <div class="stat-value" id="statPaket">-</div>
+          <div class="stat-label">Total Paket</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="statSelesai">-</div>
+          <div class="stat-label">Selesai</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value" id="statProses">-</div>
+          <div class="stat-label">Dalam Proses</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value" id="statNilai">-</div>
+          <div class="stat-label">Total Nilai (Rp)</div>
+        </div>
+      </div>
 
+      <!-- Recent Projects -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Paket Pengadaan Terbaru</h2>
+          <a href="pages/projects.html" class="btn btn-secondary btn-sm">Lihat Semua</a>
+        </div>
+        <div class="card-body">
+          <div id="loadingState" class="loading">
+            <div class="loading-spinner"></div>
+            <p class="mt-2">Memuat data...</p>
+          </div>
+          
+          <div id="emptyState" class="empty-state hidden">
+            <div class="empty-state-icon">📭</div>
+            <h3 class="empty-state-title">Belum ada paket pengadaan</h3>
+            <p class="empty-state-text">Mulai dengan membuat paket pengadaan baru</p>
+            <a href="pages/project-new.html" class="btn btn-primary">➕ Buat Paket Baru</a>
+          </div>
+          
+          <div id="tableContainer" class="table-container hidden">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama Paket</th>
+                  <th>Penyedia</th>
+                  <th class="text-right">Nilai</th>
+                  <th class="text-center">Progress</th>
+                  <th class="text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="projectsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Aksi Cepat</h2>
+        </div>
+        <div class="card-body">
+          <div class="btn-group">
+            <a href="pages/project-new.html" class="btn btn-primary">📁 Buat Paket</a>
+            <a href="pages/hps.html" class="btn btn-secondary">📊 Buat HPS</a>
+            <a href="pages/spk.html" class="btn btn-secondary">📝 Buat SPK</a>
+            <a href="pages/bast.html" class="btn btn-secondary">🤝 Buat BAST</a>
+            <a href="pages/kuitansi.html" class="btn btn-secondary">🧾 Buat Kuitansi</a>
+          </div>
+        </div>
+      </div>
+
+    </main>
   </div>
 
   <!-- Scripts -->
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/dashboard.js"></script>
+  <script src="js/institution.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      loadDashboard();
+    });
 
+    function loadDashboard() {
+      API.get('getProjects')
+        .then(function(result) {
+          Utils.hide('loadingState');
+          
+          if (!result.success) {
+            Utils.show('emptyState');
+            updateStats(0, 0, 0, 0);
+            return;
+          }
+          
+          var projects = result.data || [];
+          
+          if (projects.length === 0) {
+            Utils.show('emptyState');
+            updateStats(0, 0, 0, 0);
+            return;
+          }
+          
+          updateStats(projects);
+          renderTable(projects.slice(0, 10)); // Show latest 10
+          Utils.show('tableContainer');
+        });
+    }
+
+    function updateStats(projects) {
+      var total = 0, selesai = 0, proses = 0, nilai = 0;
+      
+      if (Array.isArray(projects)) {
+        total = projects.length;
+        for (var i = 0; i < projects.length; i++) {
+          nilai += projects[i].nilaiKontrak || 0;
+          if (projects[i].status === 'Selesai') selesai++;
+          else proses++;
+        }
+      }
+      
+      Utils.setText('statPaket', total);
+      Utils.setText('statSelesai', selesai);
+      Utils.setText('statProses', proses);
+      Utils.setText('statNilai', Utils.formatNumber(nilai));
+    }
+
+    function renderTable(projects) {
+      var tbody = document.getElementById('projectsTable');
+      var html = '';
+      
+      for (var i = 0; i < projects.length; i++) {
+        var p = projects[i];
+        var statusClass = p.status === 'Selesai' ? 'badge-success' : 'badge-warning';
+        
+        html += '<tr>';
+        html += '<td>' + (i + 1) + '</td>';
+        html += '<td><a href="pages/project-detail.html?id=' + p.projectId + '">' + Utils.escapeHtml(p.namaProject) + '</a></td>';
+        html += '<td>' + Utils.escapeHtml(p.namaPenyedia || '-') + '</td>';
+        html += '<td class="text-right">' + Utils.formatRupiah(p.nilaiKontrak || 0) + '</td>';
+        html += '<td class="text-center"><span class="badge ' + statusClass + '">' + Utils.escapeHtml(p.status || 'Draft') + '</span></td>';
+        html += '<td class="text-center"><a href="pages/project-detail.html?id=' + p.projectId + '" class="btn btn-secondary btn-sm">Detail</a></td>';
+        html += '</tr>';
+      }
+      
+      tbody.innerHTML = html;
+    }
+  </script>
 </body>
 </html>

@@ -14,9 +14,7 @@ var CONFIG = (function() {
       if (stored && stored.trim() !== '') {
         return stored.trim();
       }
-    } catch (e) {
-      // localStorage not available
-    }
+    } catch (e) {}
     return DEFAULT_URL;
   }
   
@@ -26,9 +24,7 @@ var CONFIG = (function() {
         localStorage.setItem(STORAGE_KEY, url.trim());
         return true;
       }
-    } catch (e) {
-      // localStorage not available
-    }
+    } catch (e) {}
     return false;
   }
   
@@ -36,9 +32,7 @@ var CONFIG = (function() {
     try {
       localStorage.removeItem(STORAGE_KEY);
       return true;
-    } catch (e) {
-      // localStorage not available
-    }
+    } catch (e) {}
     return false;
   }
   
@@ -48,9 +42,7 @@ var CONFIG = (function() {
   }
   
   return {
-    get API_URL() {
-      return getApiUrl();
-    },
+    get API_URL() { return getApiUrl(); },
     setApiUrl: setApiUrl,
     clearApiUrl: clearApiUrl,
     isConfigured: isConfigured,
