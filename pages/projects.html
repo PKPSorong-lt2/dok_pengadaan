@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Paket - Sistem Pengadaan</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📋 SIPBJ</div>
+        <div class="sidebar-subtitle">Sistem Informasi Pengadaan<br>Barang & Jasa</div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="../index.html" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Dashboard</span></a>
+        <div class="menu-title">Pengadaan</div>
+        <a href="projects.html" class="menu-item active"><span class="menu-icon">📁</span><span class="menu-text">Daftar Paket</span></a>
+        <a href="project-new.html" class="menu-item"><span class="menu-icon">➕</span><span class="menu-text">Buat Paket Baru</span></a>
+        <div class="menu-title">Dokumen</div>
+        <a href="hps.html" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">HPS</span></a>
+        <a href="spk.html" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">SPK/Kontrak</span></a>
+        <a href="bapp.html" class="menu-item"><span class="menu-icon">🔍</span><span class="menu-text">BA Pemeriksaan</span></a>
+        <a href="bast.html" class="menu-item"><span class="menu-icon">🤝</span><span class="menu-text">BAST</span></a>
+        <a href="ba-bayar.html" class="menu-item"><span class="menu-icon">💳</span><span class="menu-text">BA Pembayaran</span></a>
+        <a href="kuitansi.html" class="menu-item"><span class="menu-icon">🧾</span><span class="menu-text">Kuitansi</span></a>
+        <div class="menu-title">Lainnya</div>
+        <a href="vendors.html" class="menu-item"><span class="menu-icon">🏪</span><span class="menu-text">Data Penyedia</span></a>
+        <a href="settings.html" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Pengaturan</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a> / <span>Daftar Paket</span>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">📁 Daftar Paket Pengadaan</h1>
+          <p class="page-subtitle">Kelola semua paket pengadaan barang dan jasa</p>
+        </div>
+        <a href="project-new.html" class="btn btn-primary">➕ Buat Paket Baru</a>
+      </div>
+
+      <!-- Filter -->
+      <div class="card">
+        <div class="card-body" style="padding:12px 20px;">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <div style="flex:1;min-width:200px;">
+              <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari nama paket..." onkeyup="filterTable()">
+            </div>
+            <div>
+              <select id="filterStatus" class="form-control" onchange="filterTable()">
+                <option value="">Semua Status</option>
+                <option value="Draft">Draft</option>
+                <option value="Proses">Proses</option>
+                <option value="Selesai">Selesai</option>
+              </select>
+            </div>
+            <div>
+              <select id="filterJenis" class="form-control" onchange="filterTable()">
+                <option value="">Semua Jenis</option>
+                <option value="Pengadaan Langsung">Pengadaan Langsung</option>
+                <option value="Penunjukan Langsung">Penunjukan Langsung</option>
+                <option value="Tender">Tender</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card">
+        <div class="card-body">
+          
+          <!-- Loading -->
+          <div id="loadingState" class="loading">
+            <div class="loading-spinner"></div>
+            <p class="mt-2">Memuat data...</p>
+          </div>
+          
+          <!-- Empty -->
+          <div id="emptyState" class="empty-state hidden">
+            <div class="empty-state-icon">📭</div>
+            <h3 class="empty-state-title">Belum ada paket pengadaan</h3>
+            <p class="empty-state-text">Mulai dengan membuat paket pengadaan baru</p>
+            <a href="project-new.html" class="btn btn-primary">➕ Buat Paket Baru</a>
+          </div>
+          
+          <!-- Table -->
+          <div id="tableContainer" class="table-container hidden">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:50px;">No</th>
+                  <th>Nama Paket</th>
+                  <th>Jenis</th>
+                  <th>Penyedia</th>
+                  <th class="text-right">Nilai Kontrak</th>
+                  <th class="text-center">Status</th>
+                  <th class="text-center">Progress</th>
+                  <th class="text-center" style="width:120px;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="projectsTable"></tbody>
+            </table>
+          </div>
+          
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/institution.js"></script>
+  <script>
+    var allProjects = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadProjects();
+    });
+
+    function loadProjects() {
+      Utils.show('loadingState');
+      Utils.hide('emptyState');
+      Utils.hide('tableContainer');
+
+      API.get('getProjects')
+        .then(function(result) {
+          Utils.hide('loadingState');
+          
+          if (!result.success) {
+            showEmpty();
+            return;
+          }
+          
+          allProjects = result.data || [];
+          
+          if (allProjects.length === 0) {
+            showEmpty();
+            return;
+          }
+          
+          renderTable(allProjects);
+          Utils.show('tableContainer');
+        });
+    }
+
+    function showEmpty() {
+      Utils.show('emptyState');
+      Utils.hide('tableContainer');
+    }
+
+    function renderTable(projects) {
+      var tbody = document.getElementById('projectsTable');
+      var html = '';
+      
+      for (var i = 0; i < projects.length; i++) {
+        var p = projects[i];
+        var statusClass = getStatusClass(p.status);
+        var progress = calculateProgress(p);
+        
+        html += '<tr data-nama="' + (p.namaProject || '').toLowerCase() + '" data-status="' + (p.status || '') + '" data-jenis="' + (p.jenisPengadaan || '') + '">';
+        html += '<td>' + (i + 1) + '</td>';
+        html += '<td><a href="project-detail.html?id=' + p.projectId + '" style="font-weight:500;">' + Utils.escapeHtml(p.namaProject) + '</a>';
+        if (p.unit) html += '<br><small style="color:#666;">' + Utils.escapeHtml(p.unit) + '</small>';
+        html += '</td>';
+        html += '<td><span class="badge badge-info">' + Utils.escapeHtml(p.jenisPengadaan || 'Langsung') + '</span></td>';
+        html += '<td>' + Utils.escapeHtml(p.namaPenyedia || '-') + '</td>';
+        html += '<td class="text-right">' + Utils.formatRupiah(p.nilaiKontrak || 0) + '</td>';
+        html += '<td class="text-center"><span class="badge ' + statusClass + '">' + Utils.escapeHtml(p.status || 'Draft') + '</span></td>';
+        html += '<td class="text-center">';
+        html += '<div style="background:#e0e0e0;border-radius:4px;height:8px;width:100%;"><div style="background:#4caf50;border-radius:4px;height:100%;width:' + progress + '%;"></div></div>';
+        html += '<small>' + progress + '%</small>';
+        html += '</td>';
+        html += '<td class="text-center">';
+        html += '<a href="project-detail.html?id=' + p.projectId + '" class="btn btn-primary btn-sm">Detail</a> ';
+        html += '<button class="btn btn-danger btn-sm" onclick="deleteProject(\'' + p.projectId + '\')">🗑️</button>';
+        html += '</td>';
+        html += '</tr>';
+      }
+      
+      tbody.innerHTML = html;
+    }
+
+    function getStatusClass(status) {
+      switch (status) {
+        case 'Selesai': return 'badge-success';
+        case 'Proses': return 'badge-warning';
+        case 'Batal': return 'badge-danger';
+        default: return 'badge-secondary';
+      }
+    }
+
+    function calculateProgress(p) {
+      var steps = 0;
+      var total = 6;
+      
+      if (p.documents) {
+        if (p.documents.hps) steps++;
+        if (p.documents.spk) steps++;
+        if (p.documents.bapp) steps++;
+        if (p.documents.bast) steps++;
+        if (p.documents.bap) steps++;
+        if (p.documents.kuitansi) steps++;
+      }
+      
+      return Math.round((steps / total) * 100);
+    }
+
+    function filterTable() {
+      var search = document.getElementById('searchInput').value.toLowerCase();
+      var status = document.getElementById('filterStatus').value;
+      var jenis = document.getElementById('filterJenis').value;
+      
+      var rows = document.querySelectorAll('#projectsTable tr');
+      var visibleCount = 0;
+      
+      rows.forEach(function(row) {
+        var nama = row.getAttribute('data-nama') || '';
+        var rowStatus = row.getAttribute('data-status') || '';
+        var rowJenis = row.getAttribute('data-jenis') || '';
+        
+        var matchSearch = nama.indexOf(search) !== -1;
+        var matchStatus = !status || rowStatus === status;
+        var matchJenis = !jenis || rowJenis === jenis;
+        
+        if (matchSearch && matchStatus && matchJenis) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      
+      if (visibleCount === 0 && allProjects.length > 0) {
+        // Show no results message
+      }
+    }
+
+    function deleteProject(projectId) {
+      if (!confirm('Hapus paket ini? Semua data terkait akan hilang.')) return;
+      
+      API.post('deleteProject', { projectId: projectId })
+        .then(function(result) {
+          if (result.success) {
+            loadProjects();
+          } else {
+            alert('Gagal menghapus: ' + (result.error || 'Unknown error'));
+          }
+        });
+    }
+  </script>
+</body>
+</html>

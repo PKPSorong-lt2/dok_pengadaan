@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buat Paket Baru - Sistem Pengadaan</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📋 SIPBJ</div>
+        <div class="sidebar-subtitle">Sistem Informasi Pengadaan<br>Barang & Jasa</div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="../index.html" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Dashboard</span></a>
+        <div class="menu-title">Pengadaan</div>
+        <a href="projects.html" class="menu-item"><span class="menu-icon">📁</span><span class="menu-text">Daftar Paket</span></a>
+        <a href="project-new.html" class="menu-item active"><span class="menu-icon">➕</span><span class="menu-text">Buat Paket Baru</span></a>
+        <div class="menu-title">Dokumen</div>
+        <a href="hps.html" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">HPS</span></a>
+        <a href="spk.html" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">SPK/Kontrak</span></a>
+        <a href="bapp.html" class="menu-item"><span class="menu-icon">🔍</span><span class="menu-text">BA Pemeriksaan</span></a>
+        <a href="bast.html" class="menu-item"><span class="menu-icon">🤝</span><span class="menu-text">BAST</span></a>
+        <a href="ba-bayar.html" class="menu-item"><span class="menu-icon">💳</span><span class="menu-text">BA Pembayaran</span></a>
+        <a href="kuitansi.html" class="menu-item"><span class="menu-icon">🧾</span><span class="menu-text">Kuitansi</span></a>
+        <div class="menu-title">Lainnya</div>
+        <a href="vendors.html" class="menu-item"><span class="menu-icon">🏪</span><span class="menu-text">Data Penyedia</span></a>
+        <a href="settings.html" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Pengaturan</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a> / <a href="projects.html">Daftar Paket</a> / <span>Buat Baru</span>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">➕ Buat Paket Pengadaan Baru</h1>
+          <p class="page-subtitle">Isi informasi dasar paket pengadaan</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Informasi Paket</h2>
+        </div>
+        <div class="card-body">
+          <div id="alertBox" class="alert hidden"></div>
+          
+          <form id="projectForm">
+            <!-- Nama Paket -->
+            <div class="form-group">
+              <label class="form-label">Nama Paket Pengadaan <span class="required">*</span></label>
+              <input type="text" id="namaProject" class="form-control" placeholder="Contoh: Pengadaan ATK Semester 1 2025">
+            </div>
+
+            <!-- Jenis & Sumber Dana -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Jenis Pengadaan <span class="required">*</span></label>
+                <select id="jenisPengadaan" class="form-control">
+                  <option value="Pengadaan Langsung">Pengadaan Langsung (≤50 juta)</option>
+                  <option value="Penunjukan Langsung">Penunjukan Langsung</option>
+                  <option value="E-Purchasing">E-Purchasing</option>
+                  <option value="Tender">Tender/Seleksi</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sumber Dana</label>
+                <select id="sumberDana" class="form-control">
+                  <option value="APBN">APBN</option>
+                  <option value="PNBP">PNBP</option>
+                  <option value="Hibah">Hibah</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Unit & Tahun -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Unit Pengusul</label>
+                <input type="text" id="unit" class="form-control" placeholder="Contoh: Bagian Umum">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tahun Anggaran</label>
+                <input type="number" id="tahunAnggaran" class="form-control" value="2025" min="2020" max="2030">
+              </div>
+            </div>
+
+            <!-- Keterangan -->
+            <div class="form-group">
+              <label class="form-label">Keterangan</label>
+              <textarea id="keterangan" class="form-control" rows="3" placeholder="Catatan atau keterangan tambahan..."></textarea>
+            </div>
+
+            <hr style="margin:24px 0;">
+
+            <!-- Data Penyedia (Optional) -->
+            <h3 style="font-size:14px;color:#1976d2;margin-bottom:16px;">📦 Data Penyedia (Opsional - bisa diisi nanti)</h3>
+            
+            <div class="form-group">
+              <label class="form-label">Nama Penyedia</label>
+              <input type="text" id="namaPenyedia" class="form-control" placeholder="Contoh: CV. CENDRAWASIH JAYA MANDIRI">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nama Direktur/Pemilik</label>
+                <input type="text" id="namaDirektur" class="form-control" placeholder="Contoh: FECKY IMANUEL MUGU">
+              </div>
+              <div class="form-group">
+                <label class="form-label">NPWP</label>
+                <input type="text" id="npwpPenyedia" class="form-control" placeholder="XX.XXX.XXX.X-XXX.XXX">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Alamat Penyedia</label>
+              <input type="text" id="alamatPenyedia" class="form-control" placeholder="Jl. Dewi Sartika RT. 005 RW.004 Majener Salawati">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">No. Rekening</label>
+                <input type="text" id="noRekening" class="form-control" placeholder="Nomor rekening penyedia">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nama Bank</label>
+                <input type="text" id="namaBank" class="form-control" placeholder="Contoh: Bank BRI">
+              </div>
+            </div>
+
+          </form>
+        </div>
+        <div class="card-footer">
+          <div class="btn-group">
+            <a href="projects.html" class="btn btn-secondary">← Batal</a>
+            <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveProject()">💾 Simpan & Lanjutkan</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/institution.js"></script>
+  <script>
+    function saveProject() {
+      var nama = Utils.getValue('namaProject');
+      var jenis = Utils.getValue('jenisPengadaan');
+      
+      if (!nama) {
+        showAlert('error', 'Nama paket wajib diisi');
+        return;
+      }
+      
+      var btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      
+      var data = {
+        namaProject: nama,
+        jenisPengadaan: jenis,
+        sumberDana: Utils.getValue('sumberDana'),
+        unit: Utils.getValue('unit'),
+        tahunAnggaran: Utils.getValue('tahunAnggaran'),
+        keterangan: Utils.getValue('keterangan'),
+        namaPenyedia: Utils.getValue('namaPenyedia'),
+        namaDirektur: Utils.getValue('namaDirektur'),
+        npwpPenyedia: Utils.getValue('npwpPenyedia'),
+        alamatPenyedia: Utils.getValue('alamatPenyedia'),
+        noRekening: Utils.getValue('noRekening'),
+        namaBank: Utils.getValue('namaBank'),
+        status: 'Draft'
+      };
+      
+      API.post('createProject', data)
+        .then(function(result) {
+          btn.disabled = false;
+          btn.textContent = '💾 Simpan & Lanjutkan';
+          
+          if (!result.success) {
+            showAlert('error', result.error || 'Gagal menyimpan');
+            return;
+          }
+          
+          showAlert('success', 'Paket berhasil dibuat!');
+          
+          // Redirect to detail page
+          setTimeout(function() {
+            var projectId = result.data && result.data.projectId;
+            if (projectId) {
+              window.location.href = 'project-detail.html?id=' + projectId;
+            } else {
+              window.location.href = 'projects.html';
+            }
+          }, 1000);
+        });
+    }
+
+    function showAlert(type, msg) {
+      var el = document.getElementById('alertBox');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      
+      if (type === 'error') {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  </script>
+</body>
+</html>

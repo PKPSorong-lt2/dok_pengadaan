@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BA Pemeriksaan - Sistem Pengadaan</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📋 SIPBJ</div>
+        <div class="sidebar-subtitle">Sistem Informasi Pengadaan<br>Barang & Jasa</div>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="../index.html" class="menu-item"><span class="menu-icon">🏠</span><span class="menu-text">Dashboard</span></a>
+        <div class="menu-title">Pengadaan</div>
+        <a href="projects.html" class="menu-item"><span class="menu-icon">📁</span><span class="menu-text">Daftar Paket</span></a>
+        <div class="menu-title">Dokumen</div>
+        <a href="hps.html" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">HPS</span></a>
+        <a href="spk.html" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">SPK/Kontrak</span></a>
+        <a href="bapp.html" class="menu-item active"><span class="menu-icon">🔍</span><span class="menu-text">BA Pemeriksaan</span></a>
+        <a href="bast.html" class="menu-item"><span class="menu-icon">🤝</span><span class="menu-text">BAST</span></a>
+        <a href="ba-bayar.html" class="menu-item"><span class="menu-icon">💳</span><span class="menu-text">BA Pembayaran</span></a>
+        <a href="kuitansi.html" class="menu-item"><span class="menu-icon">🧾</span><span class="menu-text">Kuitansi</span></a>
+        <div class="menu-title">Lainnya</div>
+        <a href="settings.html" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Pengaturan</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a> / <span>BA Pemeriksaan</span>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">🔍 Berita Acara Pemeriksaan Pekerjaan</h1>
+          <p class="page-subtitle">Buat BAPP untuk pemeriksaan hasil pekerjaan</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Form BA Pemeriksaan</h2>
+        </div>
+        <div class="card-body">
+          <div id="alertBox" class="alert hidden"></div>
+          
+          <form id="bappForm">
+            <!-- Nomor & Tanggal -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nomor BAPP <span class="required">*</span></label>
+                <input type="text" id="nomorBapp" class="form-control" placeholder="BAPP-XXXX/PPK/PL450/XII/2025">
+                <button type="button" class="btn btn-secondary btn-sm mt-1" onclick="generateNomor()">🔄 Generate</button>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tanggal Pemeriksaan <span class="required">*</span></label>
+                <input type="date" id="tanggalBapp" class="form-control">
+              </div>
+            </div>
+
+            <!-- Pekerjaan -->
+            <div class="form-group">
+              <label class="form-label">Nama Pekerjaan <span class="required">*</span></label>
+              <input type="text" id="namaPekerjaan" class="form-control" placeholder="Pemeliharaan Kapal Latih Airaha 02">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Periode/Bulan</label>
+              <input type="text" id="periodePekerjaan" class="form-control" placeholder="Desember 2025">
+            </div>
+
+            <!-- Tim Pemeriksa -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">TIM PEMERIKSA/PENERIMA HASIL PEKERJAAN</h3>
+            
+            <div id="timPemeriksaContainer">
+              <div class="pemeriksa-row form-row" style="margin-bottom:8px;">
+                <div class="form-group" style="flex:2;">
+                  <input type="text" class="form-control pemeriksa-nama" placeholder="Nama Pemeriksa">
+                </div>
+                <div class="form-group" style="flex:1;">
+                  <input type="text" class="form-control pemeriksa-nip" placeholder="NIP">
+                </div>
+                <div class="form-group" style="flex:1;">
+                  <input type="text" class="form-control pemeriksa-jabatan" placeholder="Jabatan" value="Anggota">
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addPemeriksa()">+ Tambah Pemeriksa</button>
+
+            <!-- Penyedia -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">PENYEDIA</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nama Penyedia <span class="required">*</span></label>
+                <input type="text" id="namaPenyedia" class="form-control" placeholder="CV. CENDRAWASIH JAYA MANDIRI">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nama Direktur</label>
+                <input type="text" id="namaDirektur" class="form-control" placeholder="FECKY IMANUEL MUGU">
+              </div>
+            </div>
+
+            <!-- Referensi SPK -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">REFERENSI DOKUMEN</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nomor SPK</label>
+                <input type="text" id="nomorSpk" class="form-control" placeholder="SPK-XXXX/PPK/PL450/XII/2025">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tanggal SPK</label>
+                <input type="date" id="tanggalSpk" class="form-control">
+              </div>
+            </div>
+
+            <!-- Hasil Pemeriksaan -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">HASIL PEMERIKSAAN</h3>
+            <div class="form-group">
+              <label class="form-label">Kesimpulan Pemeriksaan</label>
+              <select id="hasilPemeriksaan" class="form-control">
+                <option value="Baik">Baik - Sesuai dengan spesifikasi dan dapat diterima</option>
+                <option value="Perbaikan">Perlu Perbaikan - Ada beberapa item yang perlu diperbaiki</option>
+                <option value="Ditolak">Ditolak - Tidak sesuai spesifikasi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Catatan Pemeriksaan</label>
+              <textarea id="catatanPemeriksaan" class="form-control" rows="3" placeholder="Catatan hasil pemeriksaan...">Pekerjaan telah dilaksanakan sesuai dengan spesifikasi yang ditentukan dalam kontrak.</textarea>
+            </div>
+
+            <!-- Garansi -->
+            <h3 class="mt-4 mb-2" style="font-size:14px;color:#1976d2;">GARANSI (Jika Ada)</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Masa Garansi</label>
+                <input type="text" id="masaGaransi" class="form-control" placeholder="Contoh: 12 bulan">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Berlaku Sampai</label>
+                <input type="date" id="garansiBerlaku" class="form-control">
+              </div>
+            </div>
+
+          </form>
+        </div>
+        <div class="card-footer">
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary" onclick="previewDocument()">👁️ Preview</button>
+            <button type="button" class="btn btn-success" onclick="saveAndPrint()">🖨️ Simpan & Cetak</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Section -->
+      <div id="previewSection" class="card hidden">
+        <div class="card-header">
+          <h2 class="card-title">Preview Dokumen</h2>
+          <button class="btn btn-secondary btn-sm no-print" onclick="window.print()">🖨️ Cetak</button>
+        </div>
+        <div class="card-body">
+          <div class="doc-preview" id="documentPreview"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/institution.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('tanggalBapp').value = new Date().toISOString().split('T')[0];
+    });
+
+    function generateNomor() {
+      var nomor = Utils.generateNomorDokumen('BAPP', INSTITUTION.kodeSatker);
+      document.getElementById('nomorBapp').value = nomor;
+    }
+
+    function addPemeriksa() {
+      var container = document.getElementById('timPemeriksaContainer');
+      var row = document.createElement('div');
+      row.className = 'pemeriksa-row form-row';
+      row.style.marginBottom = '8px';
+      row.innerHTML = '<div class="form-group" style="flex:2;"><input type="text" class="form-control pemeriksa-nama" placeholder="Nama Pemeriksa"></div>' +
+        '<div class="form-group" style="flex:1;"><input type="text" class="form-control pemeriksa-nip" placeholder="NIP"></div>' +
+        '<div class="form-group" style="flex:1;"><input type="text" class="form-control pemeriksa-jabatan" placeholder="Jabatan" value="Anggota"></div>' +
+        '<div class="form-group" style="flex:0;"><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.remove()">×</button></div>';
+      container.appendChild(row);
+    }
+
+    function getTimPemeriksa() {
+      var tim = [];
+      var rows = document.querySelectorAll('.pemeriksa-row');
+      rows.forEach(function(row) {
+        var nama = row.querySelector('.pemeriksa-nama').value.trim();
+        var nip = row.querySelector('.pemeriksa-nip').value.trim();
+        var jabatan = row.querySelector('.pemeriksa-jabatan').value.trim();
+        if (nama) {
+          tim.push({ nama: nama, nip: nip, jabatan: jabatan || 'Anggota' });
+        }
+      });
+      return tim;
+    }
+
+    function previewDocument() {
+      var data = getFormData();
+      if (!validateForm(data)) return;
+      
+      var html = renderBAPPDocument(data);
+      document.getElementById('documentPreview').innerHTML = html;
+      Utils.show('previewSection');
+      document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function getFormData() {
+      return {
+        nomor: Utils.getValue('nomorBapp'),
+        tanggal: Utils.getValue('tanggalBapp'),
+        namaPekerjaan: Utils.getValue('namaPekerjaan'),
+        periode: Utils.getValue('periodePekerjaan'),
+        timPemeriksa: getTimPemeriksa(),
+        namaPenyedia: Utils.getValue('namaPenyedia'),
+        namaDirektur: Utils.getValue('namaDirektur'),
+        nomorSpk: Utils.getValue('nomorSpk'),
+        tanggalSpk: Utils.getValue('tanggalSpk'),
+        hasilPemeriksaan: Utils.getValue('hasilPemeriksaan'),
+        catatan: Utils.getValue('catatanPemeriksaan'),
+        masaGaransi: Utils.getValue('masaGaransi'),
+        garansiBerlaku: Utils.getValue('garansiBerlaku')
+      };
+    }
+
+    function validateForm(data) {
+      if (!data.nomor) { showAlert('error', 'Nomor BAPP wajib diisi'); return false; }
+      if (!data.tanggal) { showAlert('error', 'Tanggal wajib diisi'); return false; }
+      if (!data.namaPekerjaan) { showAlert('error', 'Nama pekerjaan wajib diisi'); return false; }
+      if (!data.namaPenyedia) { showAlert('error', 'Nama penyedia wajib diisi'); return false; }
+      return true;
+    }
+
+    function renderBAPPDocument(data) {
+      var tanggalFormatted = Utils.formatDate(data.tanggal);
+      var tanggalSpkFormatted = data.tanggalSpk ? Utils.formatDate(data.tanggalSpk) : '-';
+      
+      // Tim pemeriksa table
+      var timHtml = '<table class="doc-table"><thead><tr><th>No</th><th>Nama</th><th>NIP</th><th>Jabatan</th></tr></thead><tbody>';
+      data.timPemeriksa.forEach(function(t, i) {
+        timHtml += '<tr><td>' + (i+1) + '</td><td>' + Utils.escapeHtml(t.nama) + '</td><td>' + Utils.escapeHtml(t.nip || '-') + '</td><td>' + Utils.escapeHtml(t.jabatan) + '</td></tr>';
+      });
+      timHtml += '</tbody></table>';
+      
+      // Tim signature
+      var sigHtml = '<div style="display:flex;flex-wrap:wrap;justify-content:space-around;margin-top:40px;">';
+      data.timPemeriksa.forEach(function(t) {
+        sigHtml += '<div style="text-align:center;margin:10px;"><p>' + Utils.escapeHtml(t.jabatan) + '</p><p style="margin-top:60px;text-decoration:underline;font-weight:bold;">' + Utils.escapeHtml(t.nama) + '</p>' + (t.nip ? '<p style="font-size:10pt;">NIP. ' + t.nip + '</p>' : '') + '</div>';
+      });
+      sigHtml += '</div>';
+      
+      return '<div class="doc-header">' +
+        '<table style="width:100%;border:none;"><tr><td style="width:80px;vertical-align:top;border:none;padding:0;"></td>' +
+        '<td style="text-align:center;border:none;padding:0;">' +
+        '<div class="doc-kementerian">' + INSTITUTION.kementerian + '</div>' +
+        '<div class="doc-badan">' + INSTITUTION.badan + '</div>' +
+        '<div class="doc-satker">' + INSTITUTION.satker + '</div>' +
+        '<div class="doc-alamat">' + INSTITUTION.alamat + '</div>' +
+        '<div class="doc-alamat">' + INSTITUTION.kotakPos + '</div>' +
+        '</td></tr></table></div>' +
+        
+        '<div class="doc-title">' +
+        '<h2>BERITA ACARA PEMERIKSAAN PEKERJAAN</h2>' +
+        '<p><strong><em>' + Utils.escapeHtml(data.namaPekerjaan) + '</em></strong></p>' +
+        '<p>Nomor: ' + Utils.escapeHtml(data.nomor) + '</p></div>' +
+        
+        '<div class="doc-body">' +
+        '<p>Pada hari ini tanggal ' + tanggalFormatted + ', kami yang bertanda tangan di bawah ini selaku Tim Pemeriksa/Penerima Hasil Pekerjaan:</p>' +
+        
+        timHtml +
+        
+        '<p style="margin-top:20px;">Telah mengadakan pemeriksaan atas pekerjaan:</p>' +
+        '<table style="border:none;margin:15px 0;">' +
+        '<tr><td style="border:none;width:150px;">Nama Pekerjaan</td><td style="border:none;">: ' + Utils.escapeHtml(data.namaPekerjaan) + '</td></tr>' +
+        '<tr><td style="border:none;">Penyedia</td><td style="border:none;">: ' + Utils.escapeHtml(data.namaPenyedia) + '</td></tr>' +
+        '<tr><td style="border:none;">Nomor SPK</td><td style="border:none;">: ' + Utils.escapeHtml(data.nomorSpk || '-') + '</td></tr>' +
+        '<tr><td style="border:none;">Tanggal SPK</td><td style="border:none;">: ' + tanggalSpkFormatted + '</td></tr>' +
+        '</table>' +
+        
+        '<p><strong>Hasil Pemeriksaan:</strong></p>' +
+        '<p>' + Utils.escapeHtml(data.catatan) + '</p>' +
+        
+        '<p style="margin-top:15px;"><strong>Kesimpulan:</strong> ' + Utils.escapeHtml(data.hasilPemeriksaan) + '</p>' +
+        
+        (data.masaGaransi ? '<p style="margin-top:15px;"><strong>Masa Garansi:</strong> ' + Utils.escapeHtml(data.masaGaransi) + (data.garansiBerlaku ? ' (berlaku sampai ' + Utils.formatDate(data.garansiBerlaku) + ')' : '') + '</p>' : '') +
+        
+        '<p style="margin-top:20px;">Demikian Berita Acara Pemeriksaan Pekerjaan ini dibuat dengan sebenarnya untuk dipergunakan sebagaimana mestinya.</p>' +
+        '</div>' +
+        
+        sigHtml;
+    }
+
+    function saveAndPrint() {
+      var data = getFormData();
+      if (!validateForm(data)) return;
+      previewDocument();
+      setTimeout(function() { window.print(); }, 500);
+    }
+
+    function showAlert(type, msg) {
+      var el = document.getElementById('alertBox');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      setTimeout(function() { el.classList.add('hidden'); }, 3000);
+    }
+  </script>
+</body>
+</html>
