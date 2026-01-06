@@ -22,13 +22,11 @@
         <a href="project-new.html" class="menu-item"><span class="menu-icon">➕</span><span class="menu-text">Buat Paket Baru</span></a>
         <div class="menu-title">Dokumen</div>
         <a href="hps.html" class="menu-item"><span class="menu-icon">📊</span><span class="menu-text">HPS</span></a>
-        <a href="spk.html" class="menu-item"><span class="menu-icon">📝</span><span class="menu-text">SPK/Kontrak</span></a>
         <a href="bapp.html" class="menu-item"><span class="menu-icon">🔍</span><span class="menu-text">BA Pemeriksaan</span></a>
         <a href="bast.html" class="menu-item"><span class="menu-icon">🤝</span><span class="menu-text">BAST</span></a>
         <a href="ba-bayar.html" class="menu-item"><span class="menu-icon">💳</span><span class="menu-text">BA Pembayaran</span></a>
         <a href="kuitansi.html" class="menu-item"><span class="menu-icon">🧾</span><span class="menu-text">Kuitansi</span></a>
         <div class="menu-title">Lainnya</div>
-        <a href="vendors.html" class="menu-item"><span class="menu-icon">🏪</span><span class="menu-text">Data Penyedia</span></a>
         <a href="settings.html" class="menu-item"><span class="menu-icon">⚙️</span><span class="menu-text">Pengaturan</span></a>
       </nav>
     </aside>
@@ -75,36 +73,26 @@
         </div>
       </div>
 
-      <!-- Table -->
+      <!-- Content -->
       <div class="card">
         <div class="card-body">
           
-          <!-- Loading -->
-          <div id="loadingState" class="loading">
-            <div class="loading-spinner"></div>
-            <p class="mt-2">Memuat data...</p>
-          </div>
-          
-          <!-- Empty -->
-          <div id="emptyState" class="empty-state hidden">
-            <div class="empty-state-icon">📭</div>
-            <h3 class="empty-state-title">Belum ada paket pengadaan</h3>
-            <p class="empty-state-text">Mulai dengan membuat paket pengadaan baru</p>
-            <a href="project-new.html" class="btn btn-primary">➕ Buat Paket Baru</a>
+          <!-- Status -->
+          <div id="statusBox" class="alert alert-info">
+            <span id="statusText">Memuat data...</span>
           </div>
           
           <!-- Table -->
-          <div id="tableContainer" class="table-container hidden">
+          <div id="tableContainer" style="display:none;">
             <table>
               <thead>
                 <tr>
                   <th style="width:50px;">No</th>
                   <th>Nama Paket</th>
                   <th>Jenis</th>
-                  <th>Penyedia</th>
-                  <th class="text-right">Nilai Kontrak</th>
+                  <th>Unit</th>
+                  <th class="text-right">Nilai</th>
                   <th class="text-center">Status</th>
-                  <th class="text-center">Progress</th>
                   <th class="text-center" style="width:120px;">Aksi</th>
                 </tr>
               </thead>
@@ -121,184 +109,127 @@
   <script src="../js/config.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/utils.js"></script>
-  <script src="../js/institution.js"></script>
   <script>
     var allProjects = [];
 
+    // Load saat halaman ready
     document.addEventListener('DOMContentLoaded', function() {
-      // Show API URL for debugging
-      console.log('=== SIPBJ Debug ===');
-      console.log('API Configured:', API.isConfigured());
+      console.log('Page loaded');
       console.log('API URL:', CONFIG.API_URL);
+      console.log('API Configured:', CONFIG.isConfigured());
       
-      // Check API configuration first
-      if (!API.isConfigured()) {
-        Utils.hide('loadingState');
-        showConfigError();
-        return;
-      }
       loadProjects();
     });
 
-    function showConfigError() {
-      var emptyState = document.getElementById('emptyState');
-      emptyState.innerHTML = '<div class="empty-state-icon">⚠️</div>' +
-        '<h3 class="empty-state-title">API Belum Dikonfigurasi</h3>' +
-        '<p class="empty-state-text">Silakan buka Pengaturan dan masukkan URL API terlebih dahulu.</p>' +
-        '<a href="settings.html" class="btn btn-primary">⚙️ Buka Pengaturan</a>';
-      Utils.show('emptyState');
+    function setStatus(msg, type) {
+      var box = document.getElementById('statusBox');
+      var text = document.getElementById('statusText');
+      text.innerHTML = msg;
+      box.className = 'alert alert-' + (type || 'info');
+      box.style.display = 'block';
     }
 
     function loadProjects() {
-      Utils.show('loadingState');
-      Utils.hide('emptyState');
-      Utils.hide('tableContainer');
+      console.log('=== loadProjects START ===');
+      setStatus('Memuat data dari server...', 'info');
       
-      // Update loading message
-      document.getElementById('loadingState').innerHTML = 
-        '<div class="loading-spinner"></div>' +
-        '<p class="mt-2">Memuat data dari server...</p>' +
-        '<p style="font-size:11px;color:#666;">URL: ' + CONFIG.API_URL.substring(0, 50) + '...</p>';
-
-      console.log('Fetching projects from:', CONFIG.API_URL);
-
-      API.get('getProjects')
-        .then(function(result) {
-          Utils.hide('loadingState');
+      // Check config - gunakan CONFIG.isConfigured() langsung
+      if (!CONFIG.isConfigured()) {
+        setStatus('⚠️ API belum dikonfigurasi. <a href="settings.html">Buka Pengaturan</a> untuk setup.', 'warning');
+        return;
+      }
+      
+      var url = CONFIG.API_URL + '?action=getProjects';
+      console.log('Fetching:', url);
+      
+      fetch(url, { method: 'GET', redirect: 'follow' })
+        .then(function(response) {
+          console.log('Response status:', response.status);
+          return response.text();
+        })
+        .then(function(text) {
+          console.log('Response text:', text);
           
-          console.log('=== API Response ===');
-          console.log('Full result:', JSON.stringify(result, null, 2));
-          
-          // Check for config error
-          if (result && result.notConfigured) {
-            console.log('API not configured');
-            showConfigError();
-            return;
+          try {
+            var result = JSON.parse(text);
+            console.log('Parsed result:', result);
+            
+            if (!result.success) {
+              setStatus('❌ Error: ' + (result.error || 'Unknown'), 'error');
+              return;
+            }
+            
+            var data = result.data;
+            if (!data || !Array.isArray(data)) {
+              setStatus('❌ Data tidak valid', 'error');
+              return;
+            }
+            
+            allProjects = data;
+            console.log('Projects count:', allProjects.length);
+            
+            if (allProjects.length === 0) {
+              setStatus('📭 Belum ada paket pengadaan. Klik "Buat Paket Baru" untuk memulai.', 'info');
+              return;
+            }
+            
+            // Render table
+            renderTable(allProjects);
+            
+            // Hide status, show table
+            document.getElementById('statusBox').style.display = 'none';
+            document.getElementById('tableContainer').style.display = 'block';
+            
+            console.log('=== loadProjects SUCCESS ===');
+            
+          } catch (e) {
+            console.log('Parse error:', e);
+            setStatus('❌ Gagal parse response: ' + e.message, 'error');
           }
-          
-          // Handle no result
-          if (!result) {
-            console.log('No result from API');
-            showEmpty('Tidak ada response dari server. Cek Console (F12) untuk detail.');
-            return;
-          }
-          
-          // Handle error
-          if (!result.success) {
-            console.log('API error:', result.error);
-            showEmpty('Error: ' + (result.error || 'Unknown error'));
-            return;
-          }
-          
-          // Get data
-          var data = result.data;
-          console.log('Data received:', data);
-          console.log('Data type:', typeof data);
-          console.log('Is array:', Array.isArray(data));
-          
-          if (!data || !Array.isArray(data)) {
-            console.log('Data is not array, converting...');
-            data = [];
-          }
-          
-          allProjects = data;
-          console.log('Projects count:', allProjects.length);
-          
-          if (allProjects.length === 0) {
-            console.log('No projects found');
-            showEmpty();
-            return;
-          }
-          
-          console.log('Rendering', allProjects.length, 'projects');
-          renderTable(allProjects);
-          Utils.show('tableContainer');
         })
         .catch(function(err) {
-          console.log('=== API Error ===');
-          console.log('Error:', err);
-          Utils.hide('loadingState');
-          showEmpty('Network Error: ' + (err.message || 'Failed to fetch'));
+          console.log('Fetch error:', err);
+          setStatus('❌ Network error: ' + err.message, 'error');
         });
     }
 
-    function showEmpty(errorMsg) {
-      var emptyState = document.getElementById('emptyState');
-      
-      if (errorMsg) {
-        emptyState.innerHTML = '<div class="empty-state-icon">❌</div>' +
-          '<h3 class="empty-state-title">Gagal Memuat Data</h3>' +
-          '<p class="empty-state-text">' + errorMsg + '</p>' +
-          '<div class="btn-group">' +
-          '<button class="btn btn-secondary" onclick="loadProjects()">🔄 Coba Lagi</button>' +
-          '<a href="settings.html" class="btn btn-primary">⚙️ Cek Pengaturan</a>' +
-          '</div>';
-      } else {
-        emptyState.innerHTML = '<div class="empty-state-icon">📭</div>' +
-          '<h3 class="empty-state-title">Belum ada paket pengadaan</h3>' +
-          '<p class="empty-state-text">Mulai dengan membuat paket pengadaan baru</p>' +
-          '<a href="project-new.html" class="btn btn-primary">➕ Buat Paket Baru</a>';
-      }
-      
-      Utils.show('emptyState');
-      Utils.hide('tableContainer');
-    }
-
     function renderTable(projects) {
+      console.log('renderTable called with', projects.length, 'projects');
+      
       var tbody = document.getElementById('projectsTable');
       var html = '';
       
       for (var i = 0; i < projects.length; i++) {
         var p = projects[i];
-        var statusClass = getStatusClass(p.status);
-        var progress = calculateProgress(p);
         
-        html += '<tr data-nama="' + (p.namaProject || '').toLowerCase() + '" data-status="' + (p.status || '') + '" data-jenis="' + (p.jenisPengadaan || '') + '">';
+        var nama = p.namaProject || '-';
+        var jenis = p.jenisPengadaan || 'Langsung';
+        var unit = p.unit || '-';
+        var nilai = p.nilaiKontrak || 0;
+        var status = p.status || 'Draft';
+        var id = p.projectId || '';
+        
+        var statusClass = 'badge-secondary';
+        if (status === 'Selesai') statusClass = 'badge-success';
+        if (status === 'Proses') statusClass = 'badge-warning';
+        
+        html += '<tr data-nama="' + nama.toLowerCase() + '" data-status="' + status + '" data-jenis="' + jenis + '">';
         html += '<td>' + (i + 1) + '</td>';
-        html += '<td><a href="project-detail.html?id=' + p.projectId + '" style="font-weight:500;">' + Utils.escapeHtml(p.namaProject) + '</a>';
-        if (p.unit) html += '<br><small style="color:#666;">' + Utils.escapeHtml(p.unit) + '</small>';
+        html += '<td><a href="project-detail.html?id=' + id + '" style="font-weight:500;">' + escapeHtml(nama) + '</a>';
         html += '</td>';
-        html += '<td><span class="badge badge-info">' + Utils.escapeHtml(p.jenisPengadaan || 'Langsung') + '</span></td>';
-        html += '<td>' + Utils.escapeHtml(p.namaPenyedia || '-') + '</td>';
-        html += '<td class="text-right">' + Utils.formatRupiah(p.nilaiKontrak || 0) + '</td>';
-        html += '<td class="text-center"><span class="badge ' + statusClass + '">' + Utils.escapeHtml(p.status || 'Draft') + '</span></td>';
+        html += '<td><span class="badge badge-info" style="font-size:11px;">' + escapeHtml(jenis) + '</span></td>';
+        html += '<td>' + escapeHtml(unit) + '</td>';
+        html += '<td class="text-right">' + formatRupiah(nilai) + '</td>';
+        html += '<td class="text-center"><span class="badge ' + statusClass + '">' + escapeHtml(status) + '</span></td>';
         html += '<td class="text-center">';
-        html += '<div style="background:#e0e0e0;border-radius:4px;height:8px;width:100%;"><div style="background:#4caf50;border-radius:4px;height:100%;width:' + progress + '%;"></div></div>';
-        html += '<small>' + progress + '%</small>';
-        html += '</td>';
-        html += '<td class="text-center">';
-        html += '<a href="project-detail.html?id=' + p.projectId + '" class="btn btn-primary btn-sm">Detail</a> ';
-        html += '<button class="btn btn-danger btn-sm" onclick="deleteProject(\'' + p.projectId + '\')">🗑️</button>';
+        html += '<a href="project-detail.html?id=' + id + '" class="btn btn-primary btn-sm">Detail</a> ';
+        html += '<button class="btn btn-danger btn-sm" onclick="hapusPaket(\'' + id + '\')">🗑️</button>';
         html += '</td>';
         html += '</tr>';
       }
       
       tbody.innerHTML = html;
-    }
-
-    function getStatusClass(status) {
-      switch (status) {
-        case 'Selesai': return 'badge-success';
-        case 'Proses': return 'badge-warning';
-        case 'Batal': return 'badge-danger';
-        default: return 'badge-secondary';
-      }
-    }
-
-    function calculateProgress(p) {
-      var steps = 0;
-      var total = 6;
-      
-      if (p.documents) {
-        if (p.documents.hps) steps++;
-        if (p.documents.spk) steps++;
-        if (p.documents.bapp) steps++;
-        if (p.documents.bast) steps++;
-        if (p.documents.bap) steps++;
-        if (p.documents.kuitansi) steps++;
-      }
-      
-      return Math.round((steps / total) * 100);
+      console.log('Table rendered');
     }
 
     function filterTable() {
@@ -307,41 +238,53 @@
       var jenis = document.getElementById('filterJenis').value;
       
       var rows = document.querySelectorAll('#projectsTable tr');
-      var visibleCount = 0;
       
       rows.forEach(function(row) {
         var nama = row.getAttribute('data-nama') || '';
         var rowStatus = row.getAttribute('data-status') || '';
         var rowJenis = row.getAttribute('data-jenis') || '';
         
-        var matchSearch = nama.indexOf(search) !== -1;
-        var matchStatus = !status || rowStatus === status;
-        var matchJenis = !jenis || rowJenis === jenis;
+        var show = true;
+        if (search && nama.indexOf(search) === -1) show = false;
+        if (status && rowStatus !== status) show = false;
+        if (jenis && rowJenis.indexOf(jenis) === -1) show = false;
         
-        if (matchSearch && matchStatus && matchJenis) {
-          row.style.display = '';
-          visibleCount++;
-        } else {
-          row.style.display = 'none';
-        }
+        row.style.display = show ? '' : 'none';
       });
-      
-      if (visibleCount === 0 && allProjects.length > 0) {
-        // Show no results message
-      }
     }
 
-    function deleteProject(projectId) {
-      if (!confirm('Hapus paket ini? Semua data terkait akan hilang.')) return;
+    function hapusPaket(projectId) {
+      if (!confirm('Hapus paket ini?')) return;
       
-      API.post('deleteProject', { projectId: projectId })
-        .then(function(result) {
-          if (result.success) {
-            loadProjects();
-          } else {
-            alert('Gagal menghapus: ' + (result.error || 'Unknown error'));
-          }
-        });
+      setStatus('Menghapus...', 'warning');
+      
+      fetch(CONFIG.API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'deleteProject', data: { projectId: projectId } })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(result) {
+        if (result.success) {
+          loadProjects();
+        } else {
+          setStatus('❌ Gagal hapus: ' + result.error, 'error');
+        }
+      })
+      .catch(function(err) {
+        setStatus('❌ Error: ' + err.message, 'error');
+      });
+    }
+    
+    // Simple helpers (tidak bergantung pada Utils)
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    
+    function formatRupiah(num) {
+      if (!num || isNaN(num)) return 'Rp 0';
+      return 'Rp ' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
   </script>
 </body>
