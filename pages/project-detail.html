@@ -80,23 +80,13 @@
                 <div id="infoUnit" class="form-control" style="background:#f8f9fa;border:none;">-</div>
               </div>
               <div class="form-group">
-                <label class="form-label">Sumber Dana</label>
-                <div id="infoSumberDana" class="form-control" style="background:#f8f9fa;border:none;">-</div>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Penyedia</label>
-                <div id="infoPenyedia" class="form-control" style="background:#f8f9fa;border:none;">-</div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Nilai HPS</label>
-                <div id="infoNilai" class="form-control" style="background:#f8f9fa;border:none;font-weight:600;color:#1976d2;">-</div>
+                <label class="form-label">Pagu Anggaran</label>
+                <div id="infoPagu" class="form-control" style="background:#fff3e0;border:none;font-weight:600;color:#e65100;">-</div>
               </div>
             </div>
             <div class="form-group">
               <label class="form-label">Keterangan</label>
-              <div id="infoKeterangan" class="form-control" style="background:#f8f9fa;border:none;min-height:60px;">-</div>
+              <div id="infoKeterangan" class="form-control" style="background:#f8f9fa;border:none;min-height:40px;">-</div>
             </div>
           </div>
         </div>
@@ -105,7 +95,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="card-title">📦 Daftar Barang / Pekerjaan</h2>
-            <button class="btn btn-primary btn-sm" onclick="window.location.href='hps.html?id='+projectId">➕ Kelola di HPS</button>
+            <button class="btn btn-primary btn-sm" onclick="openAddModal()">➕ Tambah Item</button>
           </div>
           <div class="card-body">
             
@@ -113,8 +103,8 @@
             <div id="itemsEmpty" class="empty-state" style="display:none;">
               <div class="empty-state-icon">📭</div>
               <h3 class="empty-state-title">Belum ada item</h3>
-              <p class="empty-state-text">Tambahkan item melalui halaman HPS</p>
-              <button class="btn btn-primary" onclick="window.location.href='hps.html?id='+projectId">📊 Buka HPS</button>
+              <p class="empty-state-text">Tambahkan item barang/pekerjaan untuk paket ini</p>
+              <button class="btn btn-primary" onclick="openAddModal()">➕ Tambah Item</button>
             </div>
             
             <!-- Items table -->
@@ -128,19 +118,29 @@
                       <th>Spesifikasi</th>
                       <th class="text-right">Volume</th>
                       <th>Satuan</th>
-                      <th class="text-right">Harga Satuan</th>
-                      <th class="text-right">Jumlah</th>
+                      <th class="text-center">Status HPS</th>
+                      <th class="text-right">Jumlah HPS</th>
+                      <th style="width:100px;">Aksi</th>
                     </tr>
                   </thead>
                   <tbody id="itemsTable"></tbody>
-                  <tfoot>
+                  <tfoot id="tableFoot" style="display:none;">
                     <tr style="background:#e3f2fd;font-weight:600;">
                       <td colspan="6" class="text-right">TOTAL HPS:</td>
                       <td class="text-right" id="totalHps">Rp 0</td>
+                      <td></td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
+              
+              <!-- Pagu Warning -->
+              <div id="paguWarning" class="alert alert-error mt-2" style="display:none;">
+                ⚠️ <strong>PERINGATAN:</strong> Total HPS melebihi Pagu Anggaran! Perlu penyesuaian volume atau harga.
+              </div>
+              
+              <!-- HPS Status -->
+              <div id="hpsStatus" class="alert alert-info mt-2" style="display:none;"></div>
             </div>
             
           </div>
@@ -148,16 +148,13 @@
 
         <!-- Quick Actions -->
         <div class="card">
-          <div class="card-header">
-            <h2 class="card-title">📄 Buat Dokumen</h2>
-          </div>
+          <div class="card-header"><h2 class="card-title">🚀 Langkah Selanjutnya</h2></div>
           <div class="card-body">
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <button class="btn btn-secondary" onclick="goToDoc('hps')">📊 HPS</button>
-              <button class="btn btn-secondary" onclick="goToDoc('bapp')">🔍 BA Pemeriksaan</button>
-              <button class="btn btn-secondary" onclick="goToDoc('bast')">🤝 BAST</button>
-              <button class="btn btn-secondary" onclick="goToDoc('ba-bayar')">💳 BA Pembayaran</button>
-              <button class="btn btn-secondary" onclick="goToDoc('kuitansi')">🧾 Kuitansi</button>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <button class="btn btn-primary" onclick="goToHPS()" id="btnHPS">
+                📊 Lengkapi Survey Harga (HPS)
+              </button>
+              <span class="form-hint">→ Setelah item lengkap, lakukan survey harga 3 pembanding di halaman HPS</span>
             </div>
           </div>
         </div>
@@ -167,13 +164,94 @@
     </main>
   </div>
 
+  <!-- Modal Tambah Item (Sederhana) -->
+  <div id="addItemModal" class="modal">
+    <div class="modal-content" style="max-width:600px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Tambah Item Barang/Pekerjaan</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalAlert" class="alert hidden"></div>
+        
+        <div class="form-group">
+          <label class="form-label">Nama Barang/Pekerjaan <span class="required">*</span></label>
+          <input type="text" id="itemNama" class="form-control" placeholder="Kertas HVS A4 80 gram">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Spesifikasi Teknis</label>
+          <textarea id="itemSpek" class="form-control" rows="3" placeholder="Contoh: 80 gram, 500 lembar per rim, warna putih, merk standar"></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Volume <span class="required">*</span></label>
+            <input type="number" id="itemVolume" class="form-control" min="1" placeholder="10">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Satuan <span class="required">*</span></label>
+            <input type="text" id="itemSatuan" class="form-control" placeholder="rim / unit / paket / ls">
+          </div>
+        </div>
+        
+        <div class="alert alert-info">
+          💡 <strong>Catatan:</strong> Harga akan diisi di halaman HPS dengan survey 3 pembanding
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+        <button class="btn btn-primary" id="saveItemBtn" onclick="saveItem()">💾 Simpan Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edit Item -->
+  <div id="editItemModal" class="modal">
+    <div class="modal-content" style="max-width:600px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Item</h3>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="editModalAlert" class="alert hidden"></div>
+        <input type="hidden" id="editItemId">
+        
+        <div class="form-group">
+          <label class="form-label">Nama Barang/Pekerjaan <span class="required">*</span></label>
+          <input type="text" id="editItemNama" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Spesifikasi Teknis</label>
+          <textarea id="editItemSpek" class="form-control" rows="3"></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Volume <span class="required">*</span></label>
+            <input type="number" id="editItemVolume" class="form-control" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Satuan <span class="required">*</span></label>
+            <input type="text" id="editItemSatuan" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeEditModal()">Batal</button>
+        <button class="btn btn-primary" id="updateItemBtn" onclick="updateItem()">💾 Update</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/config.js"></script>
   <script>
     var projectId = '';
     var projectData = null;
+    var paguAnggaran = 0;
 
     document.addEventListener('DOMContentLoaded', function() {
-      // Get project ID from URL
       projectId = getUrlParam('id');
       console.log('Project ID:', projectId);
       
@@ -211,46 +289,27 @@
       setStatus('Memuat data paket...', 'info');
       
       var url = CONFIG.API_URL + '?action=getProjectDetail&projectId=' + encodeURIComponent(projectId);
-      console.log('Fetching:', url);
       
       fetch(url, { method: 'GET', redirect: 'follow' })
-        .then(function(response) {
-          console.log('Response status:', response.status);
-          return response.text();
-        })
-        .then(function(text) {
-          console.log('Response:', text);
-          
-          try {
-            var result = JSON.parse(text);
-            
-            if (!result.success) {
-              setStatus('❌ Error: ' + (result.error || 'Unknown'), 'error');
-              return;
-            }
-            
-            projectData = result.data;
-            console.log('Project data:', projectData);
-            
-            if (!projectData) {
-              setStatus('❌ Paket tidak ditemukan', 'error');
-              return;
-            }
-            
-            // Render
-            renderProject();
-            
-            // Hide status, show content
-            document.getElementById('statusBox').style.display = 'none';
-            document.getElementById('contentContainer').style.display = 'block';
-            
-          } catch (e) {
-            console.log('Parse error:', e);
-            setStatus('❌ Gagal parse response', 'error');
+        .then(function(response) { return response.json(); })
+        .then(function(result) {
+          if (!result.success) {
+            setStatus('❌ Error: ' + (result.error || 'Unknown'), 'error');
+            return;
           }
+          
+          projectData = result.data;
+          
+          if (!projectData) {
+            setStatus('❌ Paket tidak ditemukan', 'error');
+            return;
+          }
+          
+          renderProject();
+          document.getElementById('statusBox').style.display = 'none';
+          document.getElementById('contentContainer').style.display = 'block';
         })
         .catch(function(err) {
-          console.log('Fetch error:', err);
           setStatus('❌ Network error: ' + err.message, 'error');
         });
     }
@@ -267,18 +326,17 @@
       document.getElementById('infoNama').textContent = p.namaProject || '-';
       document.getElementById('infoJenis').textContent = p.jenisPengadaan || 'Pengadaan Langsung';
       document.getElementById('infoUnit').textContent = p.unit || '-';
-      document.getElementById('infoSumberDana').textContent = p.sumberDana || 'APBN';
-      document.getElementById('infoPenyedia').textContent = p.namaPenyedia || '-';
-      document.getElementById('infoNilai').textContent = formatRupiah(p.nilaiKontrak || 0);
       document.getElementById('infoKeterangan').textContent = p.keterangan || '-';
+      
+      // Pagu Anggaran
+      paguAnggaran = p.paguAnggaran || p.nilaiKontrak || 0;
+      document.getElementById('infoPagu').textContent = formatRupiah(paguAnggaran);
       
       // Items
       renderItems(p.items || []);
     }
 
     function renderItems(items) {
-      console.log('Rendering items:', items.length);
-      
       if (!items || items.length === 0) {
         document.getElementById('itemsEmpty').style.display = 'block';
         document.getElementById('itemsTableContainer').style.display = 'none';
@@ -290,35 +348,253 @@
       
       var tbody = document.getElementById('itemsTable');
       var html = '';
-      var total = 0;
+      var totalHps = 0;
+      var itemsWithHps = 0;
       
       for (var i = 0; i < items.length; i++) {
         var item = items[i];
-        var hargaSatuan = item.hargaSatuan || item.harga || 0;
-        var volume = item.volume || 0;
-        var jumlah = item.jumlahHps || (volume * hargaSatuan);
-        total += jumlah;
+        var jumlah = item.jumlahHps || 0;
+        totalHps += jumlah;
+        
+        // Check if item has HPS completed
+        var hasHps = item.harga1 > 0 && item.harga2 > 0 && item.harga3 > 0;
+        if (hasHps) itemsWithHps++;
+        
+        var statusBadge = hasHps 
+          ? '<span class="badge badge-success">✓ Lengkap</span>'
+          : '<span class="badge badge-warning">Belum Survey</span>';
         
         html += '<tr>';
         html += '<td>' + (i + 1) + '</td>';
         html += '<td>' + escapeHtml(item.namaBarang || '-') + '</td>';
-        html += '<td>' + escapeHtml(item.spesifikasi || '-') + '</td>';
-        html += '<td class="text-right">' + volume + '</td>';
+        html += '<td><small>' + escapeHtml(item.spesifikasi || '-') + '</small></td>';
+        html += '<td class="text-right">' + (item.volume || 0) + '</td>';
         html += '<td>' + escapeHtml(item.satuan || '-') + '</td>';
-        html += '<td class="text-right">' + formatRupiah(hargaSatuan) + '</td>';
-        html += '<td class="text-right">' + formatRupiah(jumlah) + '</td>';
+        html += '<td class="text-center">' + statusBadge + '</td>';
+        html += '<td class="text-right">' + (hasHps ? formatRupiah(jumlah) : '-') + '</td>';
+        html += '<td>';
+        html += '<button class="btn btn-secondary btn-sm" onclick="editItemModal(\'' + item.itemId + '\')">✏️</button> ';
+        html += '<button class="btn btn-danger btn-sm" onclick="deleteItem(\'' + item.itemId + '\')">🗑️</button>';
+        html += '</td>';
         html += '</tr>';
       }
       
       tbody.innerHTML = html;
-      document.getElementById('totalHps').textContent = formatRupiah(total);
+      
+      // Show total if any item has HPS
+      if (itemsWithHps > 0) {
+        document.getElementById('tableFoot').style.display = '';
+        document.getElementById('totalHps').textContent = formatRupiah(totalHps);
+        
+        // Check pagu
+        if (paguAnggaran > 0 && totalHps > paguAnggaran) {
+          document.getElementById('paguWarning').style.display = 'block';
+        } else {
+          document.getElementById('paguWarning').style.display = 'none';
+        }
+      } else {
+        document.getElementById('tableFoot').style.display = 'none';
+        document.getElementById('paguWarning').style.display = 'none';
+      }
+      
+      // HPS Status
+      var hpsStatusEl = document.getElementById('hpsStatus');
+      if (items.length > 0) {
+        if (itemsWithHps === items.length) {
+          hpsStatusEl.className = 'alert alert-success mt-2';
+          hpsStatusEl.innerHTML = '✅ Semua item sudah dilengkapi survey harga HPS';
+        } else {
+          hpsStatusEl.className = 'alert alert-warning mt-2';
+          hpsStatusEl.innerHTML = '⏳ ' + itemsWithHps + ' dari ' + items.length + ' item sudah dilengkapi survey harga. <a href="hps.html?id=' + projectId + '">Lengkapi di HPS →</a>';
+        }
+        hpsStatusEl.style.display = 'block';
+      } else {
+        hpsStatusEl.style.display = 'none';
+      }
     }
 
-    function goToDoc(type) {
-      window.location.href = type + '.html?id=' + projectId;
+    // ========== Modal Add Item ==========
+    function openAddModal() {
+      document.getElementById('itemNama').value = '';
+      document.getElementById('itemSpek').value = '';
+      document.getElementById('itemVolume').value = '';
+      document.getElementById('itemSatuan').value = '';
+      document.getElementById('modalAlert').classList.add('hidden');
+      document.getElementById('addItemModal').classList.add('active');
     }
 
-    // Helpers
+    function closeModal() {
+      document.getElementById('addItemModal').classList.remove('active');
+    }
+
+    function saveItem() {
+      var nama = document.getElementById('itemNama').value.trim();
+      var spek = document.getElementById('itemSpek').value.trim();
+      var volume = parseInt(document.getElementById('itemVolume').value) || 0;
+      var satuan = document.getElementById('itemSatuan').value.trim();
+      
+      // Validation
+      if (!nama) { showModalAlert('error', 'Nama barang wajib diisi'); return; }
+      if (volume <= 0) { showModalAlert('error', 'Volume harus lebih dari 0'); return; }
+      if (!satuan) { showModalAlert('error', 'Satuan wajib diisi'); return; }
+      
+      var btn = document.getElementById('saveItemBtn');
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      
+      var data = {
+        projectId: projectId,
+        namaBarang: nama,
+        spesifikasi: spek,
+        volume: volume,
+        satuan: satuan,
+        // Harga kosong - akan diisi di HPS
+        harga1: 0,
+        harga2: 0,
+        harga3: 0
+      };
+      
+      fetch(CONFIG.API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'addItem', data: data })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(result) {
+        btn.disabled = false;
+        btn.textContent = '💾 Simpan Item';
+        
+        if (!result.success) {
+          showModalAlert('error', result.error || 'Gagal menyimpan');
+          return;
+        }
+        
+        closeModal();
+        loadProject();
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = '💾 Simpan Item';
+        showModalAlert('error', 'Error: ' + err.message);
+      });
+    }
+
+    function showModalAlert(type, msg) {
+      var el = document.getElementById('modalAlert');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    // ========== Modal Edit Item ==========
+    function editItemModal(itemId) {
+      var item = (projectData.items || []).find(function(x) { return x.itemId === itemId; });
+      if (!item) return;
+      
+      document.getElementById('editItemId').value = itemId;
+      document.getElementById('editItemNama').value = item.namaBarang || '';
+      document.getElementById('editItemSpek').value = item.spesifikasi || '';
+      document.getElementById('editItemVolume').value = item.volume || '';
+      document.getElementById('editItemSatuan').value = item.satuan || '';
+      document.getElementById('editModalAlert').classList.add('hidden');
+      document.getElementById('editItemModal').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editItemModal').classList.remove('active');
+    }
+
+    function updateItem() {
+      var itemId = document.getElementById('editItemId').value;
+      var nama = document.getElementById('editItemNama').value.trim();
+      var spek = document.getElementById('editItemSpek').value.trim();
+      var volume = parseInt(document.getElementById('editItemVolume').value) || 0;
+      var satuan = document.getElementById('editItemSatuan').value.trim();
+      
+      if (!nama) { showEditAlert('error', 'Nama barang wajib diisi'); return; }
+      if (volume <= 0) { showEditAlert('error', 'Volume harus lebih dari 0'); return; }
+      if (!satuan) { showEditAlert('error', 'Satuan wajib diisi'); return; }
+      
+      var btn = document.getElementById('updateItemBtn');
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+      
+      // Get existing item to preserve HPS data
+      var existingItem = (projectData.items || []).find(function(x) { return x.itemId === itemId; });
+      
+      var data = {
+        itemId: itemId,
+        projectId: projectId,
+        namaBarang: nama,
+        spesifikasi: spek,
+        volume: volume,
+        satuan: satuan,
+        // Preserve existing HPS data
+        harga1: existingItem ? existingItem.harga1 : 0,
+        harga2: existingItem ? existingItem.harga2 : 0,
+        harga3: existingItem ? existingItem.harga3 : 0,
+        vendor1: existingItem ? existingItem.vendor1 : '',
+        vendor2: existingItem ? existingItem.vendor2 : '',
+        vendor3: existingItem ? existingItem.vendor3 : ''
+      };
+      
+      fetch(CONFIG.API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'updateItem', data: data })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(result) {
+        btn.disabled = false;
+        btn.textContent = '💾 Update';
+        
+        if (!result.success) {
+          showEditAlert('error', result.error || 'Gagal update');
+          return;
+        }
+        
+        closeEditModal();
+        loadProject();
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = '💾 Update';
+        showEditAlert('error', 'Error: ' + err.message);
+      });
+    }
+
+    function showEditAlert(type, msg) {
+      var el = document.getElementById('editModalAlert');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+
+    // ========== Delete Item ==========
+    function deleteItem(itemId) {
+      if (!confirm('Hapus item ini?')) return;
+      
+      fetch(CONFIG.API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'deleteItem', data: { projectId: projectId, itemId: itemId } })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(result) {
+        if (result.success) {
+          loadProject();
+        } else {
+          alert('Gagal hapus: ' + result.error);
+        }
+      });
+    }
+
+    // ========== Navigation ==========
+    function goToHPS() {
+      window.location.href = 'hps.html?id=' + projectId;
+    }
+
+    // ========== Helpers ==========
     function escapeHtml(str) {
       if (!str) return '';
       return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
