@@ -126,62 +126,120 @@
     var allProjects = [];
 
     document.addEventListener('DOMContentLoaded', function() {
+      // Show API URL for debugging
+      console.log('=== SIPBJ Debug ===');
+      console.log('API Configured:', API.isConfigured());
+      console.log('API URL:', CONFIG.API_URL);
+      
+      // Check API configuration first
+      if (!API.isConfigured()) {
+        Utils.hide('loadingState');
+        showConfigError();
+        return;
+      }
       loadProjects();
     });
+
+    function showConfigError() {
+      var emptyState = document.getElementById('emptyState');
+      emptyState.innerHTML = '<div class="empty-state-icon">⚠️</div>' +
+        '<h3 class="empty-state-title">API Belum Dikonfigurasi</h3>' +
+        '<p class="empty-state-text">Silakan buka Pengaturan dan masukkan URL API terlebih dahulu.</p>' +
+        '<a href="settings.html" class="btn btn-primary">⚙️ Buka Pengaturan</a>';
+      Utils.show('emptyState');
+    }
 
     function loadProjects() {
       Utils.show('loadingState');
       Utils.hide('emptyState');
       Utils.hide('tableContainer');
+      
+      // Update loading message
+      document.getElementById('loadingState').innerHTML = 
+        '<div class="loading-spinner"></div>' +
+        '<p class="mt-2">Memuat data dari server...</p>' +
+        '<p style="font-size:11px;color:#666;">URL: ' + CONFIG.API_URL.substring(0, 50) + '...</p>';
+
+      console.log('Fetching projects from:', CONFIG.API_URL);
 
       API.get('getProjects')
         .then(function(result) {
           Utils.hide('loadingState');
           
-          console.log('API Response:', result);
+          console.log('=== API Response ===');
+          console.log('Full result:', JSON.stringify(result, null, 2));
           
-          // Handle berbagai format response
+          // Check for config error
+          if (result && result.notConfigured) {
+            console.log('API not configured');
+            showConfigError();
+            return;
+          }
+          
+          // Handle no result
           if (!result) {
             console.log('No result from API');
-            showEmpty();
+            showEmpty('Tidak ada response dari server. Cek Console (F12) untuk detail.');
             return;
           }
           
+          // Handle error
           if (!result.success) {
-            console.log('API returned error:', result.error);
-            showEmpty();
+            console.log('API error:', result.error);
+            showEmpty('Error: ' + (result.error || 'Unknown error'));
             return;
           }
           
-          // Ambil data - pastikan array
+          // Get data
           var data = result.data;
-          if (!data) {
-            data = [];
-          }
-          if (!Array.isArray(data)) {
-            console.log('Data is not array:', typeof data);
+          console.log('Data received:', data);
+          console.log('Data type:', typeof data);
+          console.log('Is array:', Array.isArray(data));
+          
+          if (!data || !Array.isArray(data)) {
+            console.log('Data is not array, converting...');
             data = [];
           }
           
           allProjects = data;
-          console.log('Projects loaded:', allProjects.length);
+          console.log('Projects count:', allProjects.length);
           
           if (allProjects.length === 0) {
+            console.log('No projects found');
             showEmpty();
             return;
           }
           
+          console.log('Rendering', allProjects.length, 'projects');
           renderTable(allProjects);
           Utils.show('tableContainer');
         })
         .catch(function(err) {
-          console.log('API Error:', err);
+          console.log('=== API Error ===');
+          console.log('Error:', err);
           Utils.hide('loadingState');
-          showEmpty();
+          showEmpty('Network Error: ' + (err.message || 'Failed to fetch'));
         });
     }
 
-    function showEmpty() {
+    function showEmpty(errorMsg) {
+      var emptyState = document.getElementById('emptyState');
+      
+      if (errorMsg) {
+        emptyState.innerHTML = '<div class="empty-state-icon">❌</div>' +
+          '<h3 class="empty-state-title">Gagal Memuat Data</h3>' +
+          '<p class="empty-state-text">' + errorMsg + '</p>' +
+          '<div class="btn-group">' +
+          '<button class="btn btn-secondary" onclick="loadProjects()">🔄 Coba Lagi</button>' +
+          '<a href="settings.html" class="btn btn-primary">⚙️ Cek Pengaturan</a>' +
+          '</div>';
+      } else {
+        emptyState.innerHTML = '<div class="empty-state-icon">📭</div>' +
+          '<h3 class="empty-state-title">Belum ada paket pengadaan</h3>' +
+          '<p class="empty-state-text">Mulai dengan membuat paket pengadaan baru</p>' +
+          '<a href="project-new.html" class="btn btn-primary">➕ Buat Paket Baru</a>';
+      }
+      
       Utils.show('emptyState');
       Utils.hide('tableContainer');
     }
